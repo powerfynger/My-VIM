@@ -20,10 +20,11 @@ public:
     void handleInput();
 
 private:
+    void handleNavigationInput();
     void handleWriteInput();
     void handleCommandInput();
     void handleFindInput();
-    EditorMode &_mode;
+    EditorMode _mode;
     EditorApp &_app;
     EditorView &_view;
 };

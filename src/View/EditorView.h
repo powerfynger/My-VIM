@@ -6,11 +6,14 @@
 class EditorView
 {
 public:
+    NcursesWrapper ncurses;
     EditorView();
-    void getInput();
+    unsigned int getScrSizeX();
+    unsigned int getScrSizeY();
+    unsigned int getCmdWindowId();
+    unsigned int getContentWindowId();
 
 private:
-    NcursesWrapper _ncurses;
     unsigned int _screenSizeX, _screenSizeY;
     unsigned int _commandWindowId, _contentWindowId;
 };

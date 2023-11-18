@@ -6,13 +6,22 @@
 
 int main(int argc, char **argv)
 {
-    EditorView view;
-    view.getInput();
+    
     if (argc > 1)
     {
+        MyString fileName(argv[1]);
+        EditorView view;
+        EditorApp app(fileName);
+        MyString a("aboba");
+        view.ncurses.writeWindow(view.getContentWindowId(), a);
+        view.ncurses.refreshWindow(view.getContentWindowId());
+        EditorController controller(app, view);
+        while (true) controller.handleInput();
+
     }
     else
     {
+        std::cout << "No file provided!";
     }
     return 0;
 }
