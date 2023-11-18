@@ -4,6 +4,7 @@ project(TextEditor)
 
 set(CMAKE_CXX_STANDARD 17)
 
+
 add_executable(TextEditor
     src/main.cpp
     src/Controller/EditorController.cpp
