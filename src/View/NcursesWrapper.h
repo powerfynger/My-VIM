@@ -4,6 +4,10 @@
 #include <vector>
 #include "../Utils/MyString.h"
 
+struct WindowCords{
+    unsigned int x, y;
+};
+
 class NcursesWrapper
 {
 public:
@@ -17,10 +21,12 @@ public:
     void clearWindow(unsigned int windowId);
     void refreshWindow(unsigned int windowId);
     void writeWindow(unsigned int windowId, MyString str);
+    void writeAppendWindow(unsigned int windowId, MyString str);
     void setCursor(unsigned int y, unsigned int x);
     char getInput();
 
 private:
+    // unsigned int 
     std::vector<WINDOW *> _windows;
 };
 

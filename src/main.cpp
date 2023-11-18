@@ -12,11 +12,20 @@ int main(int argc, char **argv)
         MyString fileName(argv[1]);
         EditorView view;
         EditorApp app(fileName);
-        MyString a("aboba");
+        EditorController controller(app, view);
+        MyString a("--NAVIGATION--");
+        view.ncurses.writeWindow(view.getCmdWindowId(), a);
+        view.ncurses.refreshWindow(view.getCmdWindowId());
+        a = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
+        view.ncurses.writeWindow(view.getContentWindowId(), a);
+        view.ncurses.writeWindow(view.getContentWindowId(), a);
+        a = "bbbbbbbbbbbbbbbbbbbbbbbbbbbb";
         view.ncurses.writeWindow(view.getContentWindowId(), a);
         view.ncurses.refreshWindow(view.getContentWindowId());
-        EditorController controller(app, view);
-        while (true) controller.handleInput();
+        
+
+        // while (true) controller.handleInput();
+        controller.handleInput();
 
     }
     else

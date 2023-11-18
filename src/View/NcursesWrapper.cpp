@@ -69,6 +69,10 @@ void NcursesWrapper::writeWindow(unsigned int windowId, MyString str)
     mvwprintw(cur_window, 0, 0, str.c_str());
 }
 
+void NcursesWrapper::writeAppendWindow(unsigned int windowId, MyString str){
+    
+}
+
 void NcursesWrapper::setCursor(unsigned int y, unsigned int x)
 {
     move(y, x);
