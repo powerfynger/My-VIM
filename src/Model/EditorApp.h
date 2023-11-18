@@ -3,22 +3,15 @@
 
 #include "../Utils/MyString.h"
 
-enum class EditorMode{
-    Navigation,
-    Write,
-    Command,
-    Find
-};
-
-class EditorApp {
+class EditorApp
+{
 public:
-    explicit EditorApp(const MyString& fileName);
+    explicit EditorApp(const MyString &fileName);
     ~EditorApp();
-    EditorMode getMode();
-    void setMode(EditorMode mode);
+    // EditorMode getMode();
+    // void setMode(EditorMode mode);
 
 private:
-    EditorMode _mode;
 };
 
 #endif

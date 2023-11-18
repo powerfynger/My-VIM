@@ -4,20 +4,28 @@
 #include "../Model/EditorApp.h"
 #include "../View/EditorView.h"
 
-class EditorController{
+enum class EditorMode
+{
+    Navigation,
+    Write,
+    Command,
+    Find
+};
+
+class EditorController
+{
 public:
-    explicit EditorController(EditorApp& app,  EditorView& view);
-    
+    explicit EditorController(EditorApp &app, EditorView &view);
+
     void handleInput();
+
 private:
-    void handleInsertInput();
+    void handleWriteInput();
     void handleCommandInput();
     void handleFindInput();
-
-    EditorApp& _app;
-    EditorView& _view;
-
-
+    EditorMode &_mode;
+    EditorApp &_app;
+    EditorView &_view;
 };
 
 #endif
