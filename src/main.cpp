@@ -3,12 +3,14 @@
 #include "View/EditorView.h"
 #include "Utils/MyString.h"
 
+// #include "curses.h"
 #include <iostream>
 
-int main(){
-    MyString a("aboba");
-    a.append(" is real!!");
-    std::cout << a << std::endl;
+int main (int argc, char **argv){
+    if(argc > 1){
 
+    }else{
+
+    }
     return 0;
 }
