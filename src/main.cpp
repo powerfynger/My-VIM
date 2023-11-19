@@ -15,17 +15,9 @@ int main(int argc, char **argv)
         app.readToBuffer();
         EditorView view(app.buf);
         EditorController controller(app, view);
-        
-        MyString a("--NAVIGATION--");
-        std::vector<MyString>* text = view.editorBuffer.returnText();
-
-        view.ncurses.writeAppendWindow(view.getContentWindowId(), (*text)[0]);
-        view.ncurses.writeAppendWindow(view.getContentWindowId(), (*text)[1]);
-        view.ncurses.refreshWindow(view.getContentWindowId());
-
-        // while (true) controller.handleInput();
-        controller.handleInput();
-
+        view.displayAllText();
+        while (true) controller.handleInput();
+        // controller.handleInput();
     }
     else
     {

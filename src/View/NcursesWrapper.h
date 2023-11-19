@@ -2,10 +2,12 @@
 #define NCURSESWRAPPER_H
 #include <curses.h>
 #include <vector>
+#include <signal.h>
+
 #include "../Utils/MyString.h"
 
 struct WindowCords{
-    unsigned int x, y;
+    int x, y;
 };
 
 class NcursesWrapper
@@ -22,8 +24,9 @@ public:
     void refreshWindow(unsigned int windowId);
     void writeWindow(unsigned int windowId, MyString str);
     void writeAppendWindow(unsigned int windowId, MyString str);
-    void setCursor(unsigned int y, unsigned int x);
-    char getInput();
+    void setCursor(int windowId, int* y, int* x);
+    WindowCords getCursorCords(unsigned int windowId);
+    int getInput();
 
 private:
     // unsigned int 

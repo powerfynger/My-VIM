@@ -42,16 +42,16 @@ void EditorController::handleNavigationInput()
     switch (c)
     {
     case KEY_UP:
-        /* code */
+        _view.moveCursorUp(true);
         break;
     case KEY_DOWN:
-        /* code */
+        _view.moveCursorDown(true);
         break;
     case KEY_LEFT:
-        /* code */
+        _view.moveCursorLeft(true);
         break;
     case KEY_RIGHT:
-        /* code */
+        _view.moveCursorRight(true);
         break;
     case 'r':
         /* code */
@@ -78,6 +78,9 @@ void EditorController::handleNavigationInput()
         /* code */
         break;
     default:
+        _view.ncurses.delWindow(_view.getCmdWindowId());
+        _view.ncurses.delWindow(_view.getContentWindowId());
+        exit(EXIT_FAILURE);
         break;
     }
 }

@@ -14,7 +14,6 @@ public:
     void writeText(std::fstream& file);
 
 private:
-    int _firstLine, _lastLine, _currentLine;
     std::vector<MyString> _text;
 
 
