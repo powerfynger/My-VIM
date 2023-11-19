@@ -1,6 +1,6 @@
 #include "EditorView.h"
 
-EditorView::EditorView()
+EditorView::EditorView(Buffer& buffer) : editorBuffer(buffer)
 {
     ncurses.getSize(&_screenSizeX, &_screenSizeY);
     _contentWindowId = ncurses.addWindow(0, 0, _screenSizeY - 1, _screenSizeX, 0);

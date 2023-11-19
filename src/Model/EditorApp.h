@@ -10,14 +10,11 @@ class Buffer
 public:
     Buffer() {};
     void readText(std::fstream& file);
+    std::vector<MyString>* returnText();
     void writeText(std::fstream& file);
-    void initTextToDisplay(unsigned int max_x, unsigned int max_y);
-    void updateTextToDisplay();
-
-    std::vector<MyString> textToDisplay;
 
 private:
-    int _firstLine, _lastLine;
+    int _firstLine, _lastLine, _currentLine;
     std::vector<MyString> _text;
 
 
@@ -30,9 +27,9 @@ public:
     ~EditorApp();
     void readToBuffer();
 
+    Buffer buf;
 private:
     std::fstream _fileDescr;
-    Buffer _buf;
 };
 
 #endif

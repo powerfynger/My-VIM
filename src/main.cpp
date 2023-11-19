@@ -6,23 +6,22 @@
 
 int main(int argc, char **argv)
 {
-    
+    argc = 2;
     if (argc > 1)
     {
-        MyString fileName(argv[1]);
-        EditorView view;
+        // MyString fileName(argv[1]);
+        MyString fileName("aa");
         EditorApp app(fileName);
+        app.readToBuffer();
+        EditorView view(app.buf);
         EditorController controller(app, view);
-        MyString a("--NAVIGATION--");
-        view.ncurses.writeWindow(view.getCmdWindowId(), a);
-        view.ncurses.refreshWindow(view.getCmdWindowId());
-        a = "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
-        view.ncurses.writeWindow(view.getContentWindowId(), a);
-        view.ncurses.writeWindow(view.getContentWindowId(), a);
-        a = "bbbbbbbbbbbbbbbbbbbbbbbbbbbb";
-        view.ncurses.writeWindow(view.getContentWindowId(), a);
-        view.ncurses.refreshWindow(view.getContentWindowId());
         
+        MyString a("--NAVIGATION--");
+        std::vector<MyString>* text = view.editorBuffer.returnText();
+
+        view.ncurses.writeAppendWindow(view.getContentWindowId(), (*text)[0]);
+        view.ncurses.writeAppendWindow(view.getContentWindowId(), (*text)[1]);
+        view.ncurses.refreshWindow(view.getContentWindowId());
 
         // while (true) controller.handleInput();
         controller.handleInput();

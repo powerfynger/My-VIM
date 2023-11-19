@@ -7,15 +7,20 @@ void Buffer::readText(std::fstream& file){
     }
 }
 
+std::vector<MyString>* Buffer::returnText(){
+    return &_text;
+}
+
 EditorApp::EditorApp(MyString &fileName){
     _fileDescr.open(fileName.c_str());
 }
 
 void EditorApp::readToBuffer(){
-    _buf.readText(_fileDescr);
+    buf.readText(_fileDescr);
 }
 
 EditorApp::~EditorApp(){
     _fileDescr.close();
 
 }
+

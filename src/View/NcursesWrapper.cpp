@@ -70,7 +70,11 @@ void NcursesWrapper::writeWindow(unsigned int windowId, MyString str)
 }
 
 void NcursesWrapper::writeAppendWindow(unsigned int windowId, MyString str){
-    
+    WindowCords cords;
+    WINDOW *cur_window = this->_windows[windowId];
+    getyx(cur_window, cords.y, cords.x);
+    wprintw(cur_window, "%s", str.c_str());
+    wmove(cur_window, cords.y + 1, 0);
 }
 
 void NcursesWrapper::setCursor(unsigned int y, unsigned int x)
