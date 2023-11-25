@@ -78,9 +78,3 @@ void EditorView::moveCursorDown(bool isContent)
         ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
     }
 }
-
-
-void EditorView::endView()
-{
-    
-}

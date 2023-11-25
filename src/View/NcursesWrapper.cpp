@@ -10,16 +10,16 @@ NcursesWrapper::NcursesWrapper()
 {
     initscr();
     cbreak();
+    curs_set(2);
     raw();
     nonl();
     noecho();
-    curs_set(0);
     keypad(stdscr, TRUE);
     // Colors
     start_color();
     use_default_colors();
     init_pair(1, COLOR_BLACK, COLOR_WHITE);
-    init_pair(2, COLOR_CYAN, COLOR_BLACK);
+    init_pair(2, COLOR_WHITE, COLOR_BLACK);
     // Show
     refresh();
 }
@@ -103,12 +103,14 @@ void NcursesWrapper::setCursor(int windowId, int* y, int* x)
 
     if (*x < 0)
     {
-        *x = 0;
-        return;
+        *x = maxCords.x - 1;
+        *y -= 1;
     }
     if (*y < 0)
     {
+        // scroll up
         *y = 0;
+        *x = 0;
         return;
     }
 
@@ -122,11 +124,7 @@ void NcursesWrapper::setCursor(int windowId, int* y, int* x)
         move(*y, *x);
         return;
     }
-    wattron(cur_window, A_REVERSE);
-
     move(*y, *x);
-    wattroff(cur_window, A_REVERSE);
-
 }
 
 WindowCords NcursesWrapper::getCursorCords(unsigned int windowId){
@@ -135,6 +133,23 @@ WindowCords NcursesWrapper::getCursorCords(unsigned int windowId){
     getyx(cur_window, c.y, c.x);
     return c;
 
+}
+
+void NcursesWrapper::writeAppendCharWindow(unsigned int windowId, int y, int x, char ch)
+{
+    WINDOW *cur_window = _windows[windowId];
+
+    // Сохранение оригинального символа
+    int originalChar = mvwinch(cur_window, y, x);
+
+    // Установка нового символа
+    mvwaddch(cur_window, y, x, ch);
+
+    // Обновление экрана
+    wrefresh(cur_window);
+
+    // Восстановление оригинального символа на его исходные координаты
+    mvwaddch(cur_window, y, x, originalChar);
 }
 
 int NcursesWrapper::getInput()

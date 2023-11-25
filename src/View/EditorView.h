@@ -5,6 +5,7 @@
 #include "../Model/EditorApp.h"
 
 #include <memory>
+#include <thread>
 
 class EditorView
 {
