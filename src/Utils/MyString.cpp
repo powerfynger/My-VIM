@@ -202,13 +202,10 @@ std::ostream &operator<<(std::ostream &os, const MyString obj)
 }
 std::istream &operator>>(std::istream &is, MyString &obj)
 {
-    // delete[] obj.str_;
-    char buf[256];
-    is >> buf;
+    // TODO: Неограниченный буфер
+    char buf[4096];
+    is.getline(buf, sizeof(buf));
     obj = MyString(buf);
-    // for (int i = 0; i < obj.len_; i++){
-    // is >> obj.str_[i];
-    // }
     return is;
 }
 
@@ -263,6 +260,7 @@ MyString &MyString::operator+=(std::string &data)
 }
 MyString &MyString::operator=(const char *data)
 {
+
     delete[] str_;
     len_ = my_strlen(data);
     cap_ = len_ + 1;

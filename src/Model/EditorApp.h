@@ -8,15 +8,16 @@
 class Buffer
 {
 public:
-    Buffer() {};
-    void readText(std::fstream& file);
-    std::vector<MyString>* returnText();
+    Buffer();
+    void readText(std::fstream& file, unsigned int maxLineLen);
+    std::vector<std::vector<MyString>>* returnText();
     void writeText(std::fstream& file);
 
+    unsigned int getLinesNumber();
+
 private:
-    std::vector<MyString> _text;
-
-
+    unsigned int _textLinesNumber;
+    std::vector<std::vector<MyString>> _text;
 };
 
 class EditorApp
@@ -24,10 +25,11 @@ class EditorApp
 public:
     explicit EditorApp(MyString &fileName);
     ~EditorApp();
-    void readToBuffer();
+    void readToBuffer(unsigned int maxLineLen);
 
     Buffer buf;
 private:
+    unsigned int _maxLineLength;
     std::fstream _fileDescr;
 };
 

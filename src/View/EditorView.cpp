@@ -28,8 +28,10 @@ unsigned int EditorView::getContentWindowId()
 
 void EditorView::displayAllText()
 {
-    for(const auto line : *editorBuffer.returnText()){
-        ncurses.writeAppendWindow(getContentWindowId(), line);
+    for(const auto lineBuffer : *editorBuffer.returnText()){
+        for(const auto line : lineBuffer){
+            ncurses.writeAppendWindow(getContentWindowId(), line);
+        }
     }
     ncurses.refreshWindow(getContentWindowId());
 }

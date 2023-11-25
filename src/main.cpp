@@ -13,9 +13,9 @@ int main(int argc, char **argv)
         // MyString fileName(argv[1]);
         MyString fileName("aa");
         EditorApp app(fileName);
-        app.readToBuffer();
         EditorView view(app.buf);
         EditorController controller(app, view);
+        app.readToBuffer(view.getScrSizeX() - 2);
         view.displayAllText();
         
         std::thread inputThread([&controller]() {

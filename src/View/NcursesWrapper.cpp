@@ -91,7 +91,7 @@ void NcursesWrapper::writeAppendWindow(unsigned int windowId, MyString str){
     {
         return;
     }
-    wprintw(cur_window, "%s %d", str.c_str(),maxYAnother);
+    wprintw(cur_window, "%s", str.c_str());
     wmove(cur_window, cords.y + 1, 0);
 }
 
@@ -116,7 +116,7 @@ void NcursesWrapper::setCursor(int windowId, int* y, int* x)
 
     if (*x >= maxCords.x){
         if (*y >= maxCords.y){
-            // scroll
+            // scroll down
             return;
         }
         *y += 1;
