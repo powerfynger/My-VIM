@@ -36,31 +36,47 @@ void EditorView::displayAllText()
 
 void EditorView::moveCursorRight(bool isContent)
 {
-    _contentWindowCords.x += 1;
-    (isContent == true) ?
-    ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x) :
-    ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    if(isContent == true){
+        _contentWindowCords.x += 1;
+        ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    } else
+    {
+        _commandWindowCords.x += 1;
+        ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
+    }
 }
 void EditorView::moveCursorLeft(bool isContent)
 {
-    _contentWindowCords.x -= 1;
-    (isContent == true) ?
-    ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x) :
-    ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    if(isContent == true){
+        _contentWindowCords.x -= 1;
+        ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    } else
+    {
+        _commandWindowCords.x -= 1;
+        ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
+    }
 }
 void EditorView::moveCursorUp(bool isContent)
 {
-    _contentWindowCords.y -= 1;
-    (isContent == true) ?
-    ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x) :
-    ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    if(isContent == true){
+        _contentWindowCords.y -= 1;
+        ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    } else
+    {
+        _commandWindowCords.y -= 1;
+        ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
+    }
 }
 void EditorView::moveCursorDown(bool isContent)
 {
-    _contentWindowCords.y += 1;
-    (isContent == true) ?
-    ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x) :
-    ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    if(isContent == true){
+        _contentWindowCords.y += 1;
+        ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    } else
+    {
+        _commandWindowCords.y += 1;
+        ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
+    }
 }
 
 

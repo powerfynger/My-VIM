@@ -78,9 +78,9 @@ void EditorController::handleNavigationInput()
         /* code */
         break;
     default:
-        _view.ncurses.delWindow(_view.getCmdWindowId());
-        _view.ncurses.delWindow(_view.getContentWindowId());
-        exit(EXIT_FAILURE);
+        // DEBUG PURPOSE ONLY
+        _view.ncurses.endNcurses();
+        exit(EXIT_SUCCESS);
         break;
     }
 }

@@ -137,8 +137,12 @@ WindowCords NcursesWrapper::getCursorCords(unsigned int windowId){
 
 }
 
-
 int NcursesWrapper::getInput()
 {
     return getch();
+}
+
+void NcursesWrapper::endNcurses()
+{
+    endwin();
 }

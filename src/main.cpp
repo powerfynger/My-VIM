@@ -3,6 +3,7 @@
 #include "View/EditorView.h"
 
 #include <iostream>
+#include <thread>
 
 int main(int argc, char **argv)
 {
@@ -16,8 +17,14 @@ int main(int argc, char **argv)
         EditorView view(app.buf);
         EditorController controller(app, view);
         view.displayAllText();
-        while (true) controller.handleInput();
-        // controller.handleInput();
+        
+        std::thread inputThread([&controller]() {
+            while (true) controller.handleInput();
+        });
+
+        inputThread.join();
+
+
     }
     else
     {

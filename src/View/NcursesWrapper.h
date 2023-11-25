@@ -27,6 +27,7 @@ public:
     void setCursor(int windowId, int* y, int* x);
     WindowCords getCursorCords(unsigned int windowId);
     int getInput();
+    void endNcurses();
 
 private:
     // unsigned int 
