@@ -45,6 +45,9 @@ unsigned int NcursesWrapper::addWindow(unsigned int sy, unsigned int sx,
     if (colPairId > 0)
         wbkgd(new_window, COLOR_PAIR(colPairId));
     signal(SIGINT, handleCtrlC);
+
+    scrollok(new_window, TRUE); // Включение прокрутки для окна
+
     this->_windows.push_back(new_window);
     wrefresh(new_window);
     return this->_windows.size() - 1;
@@ -76,6 +79,14 @@ void NcursesWrapper::writeWindow(unsigned int windowId, MyString str)
     mvwprintw(cur_window, 0, 0, str.c_str());
 }
 
+void NcursesWrapper::scrollWindowUp(unsigned int windowId)
+{
+    WINDOW *cur_window = _windows[windowId];
+    wmove(cur_window, 0, 0);
+    wscrl(cur_window, -1);
+}
+
+
 void NcursesWrapper::writeAppendWindow(unsigned int windowId, MyString str){
     WindowCords cords;
     unsigned int maxY, maxYAnother;
@@ -83,19 +94,21 @@ void NcursesWrapper::writeAppendWindow(unsigned int windowId, MyString str){
     getyx(cur_window, cords.y, cords.x);
     maxY = getmaxy(cur_window);
     maxYAnother = getmaxy(_windows[1-windowId]);
-    /* 
-    TODO 
-    cords.y + maxYAnother + 1 or cords.y + 2 ???
-    */
-    if (cords.y + maxYAnother + 1 > maxY)
+    if (cords.y >= maxY - 1)
     {
-        return;
+        scroll(cur_window);
+        wmove(cur_window, cords.y, 0);
+        wclrtoeol(cur_window);
+    }
+    else
+    {
+        wmove(cur_window, cords.y + 1, 0);
     }
     wprintw(cur_window, "%s", str.c_str());
-    wmove(cur_window, cords.y + 1, 0);
+    // wmove(cur_window, cords.y + 1, 0);
 }
 
-void NcursesWrapper::setCursor(int windowId, int* y, int* x)
+ScrollingCode NcursesWrapper::setCursor(int windowId, int* y, int* x)
 {
     WindowCords maxCords, currentCords;
     WINDOW *cur_window = _windows[windowId];
@@ -111,20 +124,25 @@ void NcursesWrapper::setCursor(int windowId, int* y, int* x)
         // scroll up
         *y = 0;
         *x = 0;
-        return;
+        wmove(cur_window, *y, *x);
+        refreshWindow(windowId);
+        return ScrollingCode::SCROLL_UP;
     }
 
     if (*x >= maxCords.x){
-        if (*y >= maxCords.y){
-            // scroll down
-            return;
-        }
         *y += 1;
         *x = 0;
-        move(*y, *x);
-        return;
     }
-    move(*y, *x);
+    if (*y >= maxCords.y){
+        // SCROLL DOWN
+        *y = maxCords.y - 1;
+        wmove(cur_window, *y, *x);
+        refreshWindow(windowId);
+        return ScrollingCode::SCROLL_DOWN;
+    }
+    wmove(cur_window, *y, *x);
+    refreshWindow(windowId);
+    return ScrollingCode::STAY;
 }
 
 WindowCords NcursesWrapper::getCursorCords(unsigned int windowId){
@@ -150,6 +168,12 @@ void NcursesWrapper::writeAppendCharWindow(unsigned int windowId, int y, int x, 
 
     // Восстановление оригинального символа на его исходные координаты
     mvwaddch(cur_window, y, x, originalChar);
+}
+
+void NcursesWrapper::scrollWindow(unsigned int windowId, int n) {
+    WINDOW *cur_window = _windows[windowId];
+    scrl(n);
+    wrefresh(cur_window);
 }
 
 int NcursesWrapper::getInput()

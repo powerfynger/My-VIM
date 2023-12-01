@@ -10,6 +10,14 @@ struct WindowCords{
     int x, y;
 };
 
+enum class ScrollingCode
+{
+    SCROLL_UP,
+    SCROLL_DOWN,
+    STAY
+};
+
+
 class NcursesWrapper
 {
 public:
@@ -24,8 +32,9 @@ public:
     void refreshWindow(unsigned int windowId);
     void writeWindow(unsigned int windowId, MyString str);
     void writeAppendWindow(unsigned int windowId, MyString str);
+    void scrollWindowUp(unsigned int windowId);
     void writeAppendCharWindow(unsigned int windowId, int y, int x,char ch);
-    void setCursor(int windowId, int* y, int* x);
+    ScrollingCode setCursor(int windowId, int* y, int* x);
     WindowCords getCursorCords(unsigned int windowId);
     int getInput();
     void endNcurses();

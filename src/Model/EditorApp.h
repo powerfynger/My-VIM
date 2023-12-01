@@ -11,6 +11,7 @@ public:
     Buffer();
     void readText(std::fstream& file, unsigned int maxLineLen);
     std::vector<std::vector<MyString>>* returnText();
+    std::vector<MyString>* returnLine(unsigned int lineIndex);
     void writeText(std::fstream& file);
 
     unsigned int getLinesNumber();

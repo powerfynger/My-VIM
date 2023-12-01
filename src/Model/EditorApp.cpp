@@ -46,6 +46,10 @@ unsigned int Buffer::getLinesNumber()
 std::vector<std::vector<MyString>>* Buffer::returnText(){
     return &_text;
 }
+std::vector<MyString>* Buffer::returnLine(unsigned int lineIndex)
+{
+    return &_text[lineIndex];
+}
 
 EditorApp::EditorApp(MyString &fileName){
     _fileDescr.open(fileName.c_str());
