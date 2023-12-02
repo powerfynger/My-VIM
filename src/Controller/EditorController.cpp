@@ -53,6 +53,12 @@ void EditorController::handleNavigationInput()
     case KEY_RIGHT:
         _view.moveCursorRight(true);
         break;
+    case '^':
+        _view.moveCursorStartLine(true);
+        break;
+    case '&':
+        _view.moveCursorEndLine(true);
+        break;
     case 'r':
         /* code */
         break;

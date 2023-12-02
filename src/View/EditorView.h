@@ -24,6 +24,9 @@ public:
     void moveCursorUp(bool isContent);
     void moveCursorDown(bool isContent);
 
+    void moveCursorStartLine(bool isContent);
+    void moveCursorEndLine(bool isContent);
+
     void handleScrollDown();
     void handleScrollUp();
     void handleMoveDown();

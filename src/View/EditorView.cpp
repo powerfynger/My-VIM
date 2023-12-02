@@ -52,9 +52,35 @@ void EditorView::displayAllText()
     ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
 }
 
+void EditorView::moveCursorStartLine(bool isContent)
+{
+    if (isContent)
+    {
+        _contentWindowCords.x = 0;
+        ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    }
+    else
+    {
+
+    }
+}
+
+void EditorView::moveCursorEndLine(bool isContent)
+{
+    if (isContent)
+    {
+        _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
+        ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    }
+    else
+    {
+
+    }
+}
+
 void EditorView::moveCursorRight(bool isContent)
 {
-    if (isContent == true)
+    if (isContent)
     {
         _contentWindowCords.x += 1;
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
@@ -67,7 +93,7 @@ void EditorView::moveCursorRight(bool isContent)
 }
 void EditorView::moveCursorLeft(bool isContent)
 {
-    if (isContent == true)
+    if (isContent)
     {
         _contentWindowCords.x -= 1;
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
@@ -82,7 +108,7 @@ void EditorView::moveCursorLeft(bool isContent)
 void EditorView::moveCursorUp(bool isContent)
 {
     ScrollingCode scrl;
-    if (isContent == true)
+    if (isContent)
     {
         _contentWindowCords.y -= 1;
         scrl = ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
@@ -104,7 +130,7 @@ void EditorView::moveCursorUp(bool isContent)
 void EditorView::moveCursorDown(bool isContent)
 {
     ScrollingCode scrl;
-    if (isContent == true)
+    if (isContent)
     {
         _contentWindowCords.y += 1;
         scrl = ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
