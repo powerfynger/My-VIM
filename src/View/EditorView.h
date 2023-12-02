@@ -24,13 +24,18 @@ public:
     void moveCursorUp(bool isContent);
     void moveCursorDown(bool isContent);
 
+    void handleScrollDown();
+    void handleScrollUp();
+    void handleMoveDown();
+    void handleMoveUp();
+
 
     void endView();
 
     NcursesWrapper ncurses;
     Buffer& editorBuffer;
 private:
-    unsigned int _firstLine, _lastLine, _currentLine;
+    int _firstLine, _lastLine, _currentTextLine, _currentSubtextLine;
     WindowCords _commandWindowCords, _contentWindowCords;
     unsigned int _screenSizeX, _screenSizeY;
     unsigned int _commandWindowId, _contentWindowId;

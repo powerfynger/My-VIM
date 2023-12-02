@@ -18,7 +18,7 @@ void Buffer::readText(std::fstream& file, unsigned int maxLineLen){
             MyString subStr;
             int tmp = line.length() / maxLineLen;
             for (int i = 0; i < tmp; i++){
-                subStr = line.substr(i * maxLineLen, i * maxLineLen + maxLineLen);
+                subStr = line.substr(i * maxLineLen, maxLineLen);
                 lineBuffer.push_back(subStr);
             }
             subStr = line.substr(tmp * maxLineLen, line.length() - tmp * maxLineLen);
@@ -29,15 +29,7 @@ void Buffer::readText(std::fstream& file, unsigned int maxLineLen){
     }
     _textLinesNumber = _text.size();
 }
-/*
-[
-    ["asdasas ads",  "asss aaaa", " dsssssd ", " a "], 0
-    ["asd", "aaa", "dd ", "a"], 1
-    ["asd", "aaa", "dd ", "a"], 2
-    ["asd", "aaa", "dd ", "a"], 3
-]
 
-*/
 unsigned int Buffer::getLinesNumber()
 {
     return _textLinesNumber;
@@ -46,8 +38,11 @@ unsigned int Buffer::getLinesNumber()
 std::vector<std::vector<MyString>>* Buffer::returnText(){
     return &_text;
 }
+
 std::vector<MyString>* Buffer::returnLine(unsigned int lineIndex)
 {
+    if (lineIndex >= _textLinesNumber) 
+        return nullptr;
     return &_text[lineIndex];
 }
 

@@ -170,12 +170,6 @@ void NcursesWrapper::writeAppendCharWindow(unsigned int windowId, int y, int x, 
     mvwaddch(cur_window, y, x, originalChar);
 }
 
-void NcursesWrapper::scrollWindow(unsigned int windowId, int n) {
-    WINDOW *cur_window = _windows[windowId];
-    scrl(n);
-    wrefresh(cur_window);
-}
-
 int NcursesWrapper::getInput()
 {
     return getch();

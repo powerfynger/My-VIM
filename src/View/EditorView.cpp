@@ -1,13 +1,14 @@
 #include "EditorView.h"
 
-EditorView::EditorView(Buffer& buffer) : editorBuffer(buffer)
+EditorView::EditorView(Buffer &buffer) : editorBuffer(buffer)
 {
     ncurses.getSize(&_screenSizeX, &_screenSizeY);
     _contentWindowId = ncurses.addWindow(0, 0, _screenSizeY - 1, _screenSizeX, 0);
     _commandWindowId = ncurses.addWindow(_screenSizeY - 1, 0, 1, _screenSizeX, 1);
     _contentWindowCords.x = 0;
     _contentWindowCords.y = 0;
-    _currentLine = 0;
+    _currentTextLine = 0;
+    _currentSubtextLine = 0;
 }
 
 unsigned int EditorView::getScrSizeX()
@@ -30,9 +31,12 @@ unsigned int EditorView::getContentWindowId()
 void EditorView::displayAllText()
 {
     bool f = true;
-    for(const auto lineBuffer : *editorBuffer.returnText()){
-        for(const auto line : lineBuffer){
+    for (const auto lineBuffer : *editorBuffer.returnText())
+    {
+        for (const auto line : lineBuffer)
+        {
             ncurses.writeAppendWindow(getContentWindowId(), line);
+            ncurses.refreshWindow(getContentWindowId());
             _contentWindowCords.y += 1;
             if (_contentWindowCords.y + 1 >= _screenSizeY)
             {
@@ -40,18 +44,22 @@ void EditorView::displayAllText()
                 break;
             }
         }
-        if (!f) break;
+        if (!f)
+            break;
     }
-    _contentWindowCords.y = 0; _contentWindowCords.x = 0;
+    _contentWindowCords.y = 0;
+    _contentWindowCords.x = 0;
     ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
 }
 
 void EditorView::moveCursorRight(bool isContent)
 {
-    if(isContent == true){
+    if (isContent == true)
+    {
         _contentWindowCords.x += 1;
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
-    } else
+    }
+    else
     {
         _commandWindowCords.x += 1;
         ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
@@ -59,37 +67,35 @@ void EditorView::moveCursorRight(bool isContent)
 }
 void EditorView::moveCursorLeft(bool isContent)
 {
-    if(isContent == true){
+    if (isContent == true)
+    {
         _contentWindowCords.x -= 1;
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
-    } else
+    }
+    else
     {
         _commandWindowCords.x -= 1;
         ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
     }
 }
+
 void EditorView::moveCursorUp(bool isContent)
 {
     ScrollingCode scrl;
-    if(isContent == true){
+    if (isContent == true)
+    {
         _contentWindowCords.y -= 1;
         scrl = ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
         if (scrl == ScrollingCode::SCROLL_UP)
         {
-            if(_currentLine == 0) return;
-            _currentLine -= 1;
-            ncurses.scrollWindowUp(getContentWindowId());
-            // TODO: Обработка в цикле всех подстрок в строке
-            MyString tmp = (*editorBuffer.returnLine(_currentLine))[0];
-            ncurses.writeWindow(getContentWindowId(), tmp);
-            ncurses.refreshWindow(getContentWindowId());
-
+            handleScrollUp();
         }
         if (scrl == ScrollingCode::STAY)
         {
-            _currentLine -= 1;
+            handleMoveUp();
         }
-    } else
+    }
+    else
     {
         _commandWindowCords.y -= 1;
         ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
@@ -98,25 +104,85 @@ void EditorView::moveCursorUp(bool isContent)
 void EditorView::moveCursorDown(bool isContent)
 {
     ScrollingCode scrl;
-    if(isContent == true){
+    if (isContent == true)
+    {
         _contentWindowCords.y += 1;
         scrl = ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
         if (scrl == ScrollingCode::SCROLL_DOWN)
         {
-            if(_currentLine + 1 >= (editorBuffer.getLinesNumber())) return;
-            _currentLine += 1;
-            // TODO: Обработка в цикле всех подстрок в строке
-            MyString tmp = (*editorBuffer.returnLine(_currentLine))[0];
-            ncurses.writeAppendWindow(getContentWindowId(), tmp);
-            ncurses.refreshWindow(getContentWindowId());
+            handleScrollDown();
         }
         if (scrl == ScrollingCode::STAY)
         {
-            _currentLine += 1;
+            handleMoveDown();
         }
-    } else
+    }
+    else
     {
         _commandWindowCords.y += 1;
         scrl = ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
+    }
+}
+
+void EditorView::handleScrollUp()
+{
+    _currentSubtextLine -= 1;
+    if (_currentSubtextLine < 0)
+    {
+        _currentSubtextLine = 0;
+        _currentTextLine -= 1;
+        if (_currentTextLine < 0)
+        {
+            _currentTextLine = 0;
+            return;
+        }
+    }
+    ncurses.scrollWindowUp(getContentWindowId());
+    auto textLine = (*editorBuffer.returnLine(_currentTextLine));
+    ncurses.writeWindow(getContentWindowId(), textLine[_currentSubtextLine]);
+    ncurses.refreshWindow(getContentWindowId());
+}
+
+void EditorView::handleScrollDown()
+{
+    if (_currentTextLine + 1 >= (editorBuffer.getLinesNumber()))
+    {
+        _currentSubtextLine = -1;
+        return;
+    }
+
+    auto textLine = (*editorBuffer.returnLine(_currentTextLine));
+    _currentSubtextLine += 1;
+    if (_currentSubtextLine == textLine.size())
+    {
+        _currentSubtextLine = 0;
+        _currentTextLine += 1;
+        textLine = (*editorBuffer.returnLine(_currentTextLine));
+    }
+    ncurses.writeAppendWindow(getContentWindowId(), textLine[_currentSubtextLine]);
+    ncurses.refreshWindow(getContentWindowId());
+}
+
+void EditorView::handleMoveDown()
+{
+    auto textLine = (*editorBuffer.returnLine(_currentTextLine));
+    _currentSubtextLine += 1;
+    if (_currentSubtextLine >= textLine.size())
+    {
+        _currentSubtextLine = 0;
+        _currentTextLine += 1;
+        if (_currentTextLine >= editorBuffer.getLinesNumber()) _currentTextLine -= 1;
+    }
+}
+
+void EditorView::handleMoveUp()
+{
+    _currentSubtextLine -= 1;
+    if (_currentSubtextLine < 0)
+    {
+        _currentTextLine -= 1;
+        if (_currentTextLine < 0) _currentTextLine = 0;
+        auto textLine = (*editorBuffer.returnLine(_currentTextLine));
+        _currentSubtextLine = textLine.size() - 1;
     }
 }
