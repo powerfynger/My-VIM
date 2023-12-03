@@ -26,11 +26,13 @@ public:
 
     void moveCursorStartLine(bool isContent);
     void moveCursorEndLine(bool isContent);
+    void moveCursorBegWord(bool isContent);
 
-    void handleScrollDown();
-    void handleScrollUp();
-    void handleMoveDown();
-    void handleMoveUp();
+    bool handleScrollDown();
+    bool handleScrollUp();
+
+    bool incCurrentLine();
+    bool decCurrentLine();
 
 
     void endView();

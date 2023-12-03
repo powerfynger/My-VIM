@@ -59,6 +59,9 @@ void EditorController::handleNavigationInput()
     case '&':
         _view.moveCursorEndLine(true);
         break;
+    case 'b':
+        _view.moveCursorBegWord(true);
+        break;
     case 'r':
         /* code */
         break;

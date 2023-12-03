@@ -46,6 +46,24 @@ std::vector<MyString>* Buffer::returnLine(unsigned int lineIndex)
     return &_text[lineIndex];
 }
 
+bool Buffer::isWhitespace(char c) {
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+
+int Buffer::findStartOfWord(MyString& line, int startIndex) {
+    int currentIndex = startIndex;
+    if (currentIndex >= line.length())
+    {
+        currentIndex = line.length();
+    }
+    bool aboba = currentIndex == startIndex - 1;
+    do{
+        --currentIndex;
+    }while ( (currentIndex > 0 && !isWhitespace(line[currentIndex - 1])));
+
+    return currentIndex;
+}
+
 EditorApp::EditorApp(MyString &fileName){
     _fileDescr.open(fileName.c_str());
 

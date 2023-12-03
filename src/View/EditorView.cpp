@@ -52,6 +52,52 @@ void EditorView::displayAllText()
     ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
 }
 
+void EditorView::moveCursorBegWord(bool isContent)
+{
+    WindowCords newCords;
+    auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+    
+    newCords.y = _contentWindowCords.y;
+    newCords.x = editorBuffer.findStartOfWord(textLine, _contentWindowCords.x);
+
+    if (newCords.x < 0)
+    {
+        if (_currentTextLine == 0) return;
+        
+        if (_contentWindowCords.y != 0)
+        {   
+
+            decCurrentLine();
+            auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+
+            _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
+
+            newCords.x = editorBuffer.findStartOfWord(textLine, _contentWindowCords.x);
+            newCords.y -= 1;
+
+        }
+        else
+        {
+            // _contentWindowCords.y -= (1 - handleScrollUp());
+            handleScrollUp();
+            auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+
+            _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
+
+            newCords.x = editorBuffer.findStartOfWord(textLine, _contentWindowCords.x);
+            newCords.y -= 1;
+            return;
+        }
+
+    }
+
+
+    _contentWindowCords = newCords;
+    ncurses.setCursor(getContentWindowId(), &newCords.y, &newCords.x);
+    
+
+}
+
 void EditorView::moveCursorStartLine(bool isContent)
 {
     if (isContent)
@@ -83,6 +129,11 @@ void EditorView::moveCursorRight(bool isContent)
     if (isContent)
     {
         _contentWindowCords.x += 1;
+        if (_contentWindowCords.x > (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length())
+        {
+            _contentWindowCords.x = _screenSizeX;
+            incCurrentLine();
+        }
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
     }
     else
@@ -96,6 +147,12 @@ void EditorView::moveCursorLeft(bool isContent)
     if (isContent)
     {
         _contentWindowCords.x -= 1;
+        if (_contentWindowCords.x < 0)
+        {
+            decCurrentLine();
+            _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
+            _contentWindowCords.y -= 1;
+        }
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
     }
     else
@@ -118,7 +175,7 @@ void EditorView::moveCursorUp(bool isContent)
         }
         if (scrl == ScrollingCode::STAY)
         {
-            handleMoveUp();
+            decCurrentLine();
         }
     }
     else
@@ -133,6 +190,7 @@ void EditorView::moveCursorDown(bool isContent)
     if (isContent)
     {
         _contentWindowCords.y += 1;
+        
         scrl = ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
         if (scrl == ScrollingCode::SCROLL_DOWN)
         {
@@ -140,7 +198,7 @@ void EditorView::moveCursorDown(bool isContent)
         }
         if (scrl == ScrollingCode::STAY)
         {
-            handleMoveDown();
+            incCurrentLine();
         }
     }
     else
@@ -150,7 +208,7 @@ void EditorView::moveCursorDown(bool isContent)
     }
 }
 
-void EditorView::handleScrollUp()
+bool EditorView::handleScrollUp()
 {
     _currentSubtextLine -= 1;
     if (_currentSubtextLine < 0)
@@ -159,22 +217,23 @@ void EditorView::handleScrollUp()
         _currentTextLine -= 1;
         if (_currentTextLine < 0)
         {
-            _currentTextLine = 0;
-            return;
+             _currentTextLine = 0;
+           return true;
         }
     }
     ncurses.scrollWindowUp(getContentWindowId());
     auto textLine = (*editorBuffer.returnLine(_currentTextLine));
     ncurses.writeWindow(getContentWindowId(), textLine[_currentSubtextLine]);
     ncurses.refreshWindow(getContentWindowId());
+    return false;
 }
 
-void EditorView::handleScrollDown()
+bool EditorView::handleScrollDown()
 {
     if (_currentTextLine + 1 >= (editorBuffer.getLinesNumber()))
     {
-        _currentSubtextLine = -1;
-        return;
+        _currentSubtextLine = 0;
+        return true;
     }
 
     auto textLine = (*editorBuffer.returnLine(_currentTextLine));
@@ -187,21 +246,26 @@ void EditorView::handleScrollDown()
     }
     ncurses.writeAppendWindow(getContentWindowId(), textLine[_currentSubtextLine]);
     ncurses.refreshWindow(getContentWindowId());
+    return false;
 }
 
-void EditorView::handleMoveDown()
+// True or false indicates whether reached end or top of the file
+bool EditorView::incCurrentLine()
 {
     auto textLine = (*editorBuffer.returnLine(_currentTextLine));
     _currentSubtextLine += 1;
+
     if (_currentSubtextLine >= textLine.size())
     {
         _currentSubtextLine = 0;
         _currentTextLine += 1;
         if (_currentTextLine >= editorBuffer.getLinesNumber()) _currentTextLine -= 1;
+        return true;
     }
+    return false;
 }
 
-void EditorView::handleMoveUp()
+bool EditorView::decCurrentLine()
 {
     _currentSubtextLine -= 1;
     if (_currentSubtextLine < 0)
@@ -210,5 +274,7 @@ void EditorView::handleMoveUp()
         if (_currentTextLine < 0) _currentTextLine = 0;
         auto textLine = (*editorBuffer.returnLine(_currentTextLine));
         _currentSubtextLine = textLine.size() - 1;
+        return true;
     }
+    return false;
 }
