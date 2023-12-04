@@ -44,6 +44,8 @@ private:
     WindowCords _commandWindowCords, _contentWindowCords;
     unsigned int _screenSizeX, _screenSizeY;
     unsigned int _commandWindowId, _contentWindowId;
+
+    bool _fixCordXOutsideString();
 };
 
 #endif
