@@ -78,7 +78,6 @@ void EditorView::moveCursorBegWord(bool isContent)
         }
         else
         {
-            // _contentWindowCords.y -= (1 - handleScrollUp());
             handleScrollUp();
             auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
 
@@ -129,10 +128,20 @@ void EditorView::moveCursorRight(bool isContent)
     if (isContent)
     {
         _contentWindowCords.x += 1;
-        if (_contentWindowCords.x > (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length())
+        auto line = (*editorBuffer.returnLine(_currentTextLine));
+        if (_contentWindowCords.x > line[_currentSubtextLine].length())
         {
-            _contentWindowCords.x = _screenSizeX;
-            incCurrentLine();
+            if (_currentSubtextLine < line.size()-1)
+            {
+                _contentWindowCords.x = _screenSizeX;
+                incCurrentLine();
+            }
+            else
+            {
+                _contentWindowCords.x -= 1;
+                return;
+            }
+
         }
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
     }
@@ -149,9 +158,16 @@ void EditorView::moveCursorLeft(bool isContent)
         _contentWindowCords.x -= 1;
         if (_contentWindowCords.x < 0)
         {
-            decCurrentLine();
-            _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
-            _contentWindowCords.y -= 1;
+            if (_currentSubtextLine > 0){
+                decCurrentLine();
+                _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
+                _contentWindowCords.y -= 1;
+            }
+            else
+            {
+                _contentWindowCords.x += 1;
+                return;
+            }
         }
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
     }
@@ -213,8 +229,8 @@ bool EditorView::handleScrollUp()
     _currentSubtextLine -= 1;
     if (_currentSubtextLine < 0)
     {
-        _currentSubtextLine = 0;
         _currentTextLine -= 1;
+        _currentSubtextLine = 0;
         if (_currentTextLine < 0)
         {
              _currentTextLine = 0;
