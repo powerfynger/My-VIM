@@ -14,7 +14,8 @@ public:
     std::vector<MyString>* returnLine(unsigned int lineIndex);
 
     bool isWhitespace(char c);
-    int findStartOfWord(MyString& line, int startIndex);
+    int findStartOfWordL(MyString& line, int startIndex);
+    int findStartOfWordR(MyString& line, int startIndex);
 
     void writeText(std::fstream& file);
 

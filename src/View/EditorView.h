@@ -27,6 +27,7 @@ public:
     void moveCursorStartLine(bool isContent);
     void moveCursorEndLine(bool isContent);
     void moveCursorBegWord(bool isContent);
+    void moveCursorEndWord(bool isContent);
 
     bool handleScrollDown();
     bool handleScrollUp();

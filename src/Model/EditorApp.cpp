@@ -50,16 +50,28 @@ bool Buffer::isWhitespace(char c) {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
 
-int Buffer::findStartOfWord(MyString& line, int startIndex) {
+int Buffer::findStartOfWordL(MyString& line, int startIndex) {
     int currentIndex = startIndex;
     if (currentIndex >= line.length())
     {
         currentIndex = line.length();
     }
-    bool aboba = currentIndex == startIndex - 1;
     do{
         --currentIndex;
-    }while ( (currentIndex > 0 && !isWhitespace(line[currentIndex - 1])));
+    }while ((currentIndex > 0 && !isWhitespace(line[currentIndex - 1])));
+
+    return currentIndex;
+}
+
+int Buffer::findStartOfWordR(MyString& line, int startIndex) {
+    int currentIndex = startIndex;
+    if (currentIndex >= line.length())
+    {
+        return currentIndex;
+    }
+    do{
+        ++currentIndex;
+    }while ((currentIndex < line.length() && !isWhitespace(line[currentIndex - 1])));
 
     return currentIndex;
 }

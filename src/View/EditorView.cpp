@@ -58,7 +58,7 @@ void EditorView::moveCursorBegWord(bool isContent)
     auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
 
     newCords.y = _contentWindowCords.y;
-    newCords.x = editorBuffer.findStartOfWord(textLine, _contentWindowCords.x);
+    newCords.x = editorBuffer.findStartOfWordL(textLine, _contentWindowCords.x);
 
     if (newCords.x < 0)
     {
@@ -73,7 +73,7 @@ void EditorView::moveCursorBegWord(bool isContent)
 
             _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
 
-            newCords.x = editorBuffer.findStartOfWord(textLine, _contentWindowCords.x);
+            newCords.x = editorBuffer.findStartOfWordL(textLine, _contentWindowCords.x);
             newCords.y -= 1;
         }
         else
@@ -83,8 +83,50 @@ void EditorView::moveCursorBegWord(bool isContent)
 
             _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
 
-            newCords.x = editorBuffer.findStartOfWord(textLine, _contentWindowCords.x);
+            newCords.x = editorBuffer.findStartOfWordL(textLine, _contentWindowCords.x);
             newCords.y -= 1;
+            return;
+        }
+    }
+
+    _contentWindowCords = newCords;
+    ncurses.setCursor(getContentWindowId(), &newCords.y, &newCords.x);
+}
+
+
+void EditorView::moveCursorEndWord(bool isContent)
+{
+    WindowCords newCords;
+    auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+
+    newCords.y = _contentWindowCords.y;
+    newCords.x = editorBuffer.findStartOfWordR(textLine, _contentWindowCords.x);
+
+    if (newCords.x >= textLine.length())
+    {
+        if (_currentTextLine >= editorBuffer.getLinesNumber() - 1)
+            return;
+
+        if (_contentWindowCords.y != _screenSizeY-2)
+        {
+
+            incCurrentLine();
+            auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+
+            _contentWindowCords.x = 0;
+
+            newCords.x = 0;
+            newCords.y += 1;
+        }
+        else
+        {
+            handleScrollDown();
+            auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+
+            _contentWindowCords.x = 0;
+
+            newCords.x = 0;
+            newCords.y += 1;
             return;
         }
     }
