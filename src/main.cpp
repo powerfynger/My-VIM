@@ -22,7 +22,6 @@ int main(int argc, char **argv)
         std::thread inputThread([&controller]() {
             while (true) controller.handleInput();
         });
-
         inputThread.join();
 
 

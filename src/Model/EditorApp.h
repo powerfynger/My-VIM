@@ -16,20 +16,23 @@ public:
     std::vector<std::vector<MyString>>* returnText();
     std::vector<MyString>* returnLine(unsigned int lineIndex);
 
-    bool isWhitespace(char c);
     int findStartOfWordL(MyString& line, int startIndex);
     int findStartOfWordR(MyString& line, int startIndex);
 
     void writeText(std::fstream& file);
 
-    unsigned int getLinesNumber();
+    unsigned int getRealLinesNumbers();
+    int getTextToDisplayLinesNumber();
     ~EditorApp();
 
 private:
     unsigned int _textLinesNumber;
+    int _textToDisplayLinesNumber;
     std::vector<std::vector<MyString>> _text;
     unsigned int _maxLineLength;
     std::fstream _fileDescr;
+    
+    bool _isWhitespace(char c);
 };
 
 #endif

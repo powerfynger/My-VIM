@@ -10,6 +10,7 @@ void EditorApp::readText(std::fstream &file, unsigned int maxLineLen)
         if (line.length() <= maxLineLen)
         {
             lineBuffer.push_back(line);
+            _textToDisplayLinesNumber++;
             _text.push_back(lineBuffer);
         }
         else
@@ -20,9 +21,12 @@ void EditorApp::readText(std::fstream &file, unsigned int maxLineLen)
             {
                 subStr = line.substr(i * maxLineLen, maxLineLen);
                 lineBuffer.push_back(subStr);
+                _textToDisplayLinesNumber++;
             }
             subStr = line.substr(tmp * maxLineLen, line.length() - tmp * maxLineLen);
             lineBuffer.push_back(subStr);
+            _textToDisplayLinesNumber++;
+            
             _text.push_back(lineBuffer);
         }
         lineBuffer.clear();
@@ -30,11 +34,15 @@ void EditorApp::readText(std::fstream &file, unsigned int maxLineLen)
     _textLinesNumber = _text.size();
 }
 
-unsigned int EditorApp::getLinesNumber()
+unsigned int EditorApp::getRealLinesNumbers()
 {
     return _textLinesNumber;
 }
 
+int EditorApp::getTextToDisplayLinesNumber()
+{
+    return _textToDisplayLinesNumber;
+}
 std::vector<std::vector<MyString>> *EditorApp::returnText()
 {
     return &_text;
@@ -47,7 +55,7 @@ std::vector<MyString> *EditorApp::returnLine(unsigned int lineIndex)
     return &_text[lineIndex];
 }
 
-bool EditorApp::isWhitespace(char c)
+bool EditorApp::_isWhitespace(char c)
 {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
@@ -62,7 +70,7 @@ int EditorApp::findStartOfWordL(MyString &line, int startIndex)
     do
     {
         --currentIndex;
-    } while ((currentIndex > 0 && !isWhitespace(line[currentIndex - 1])));
+    } while ((currentIndex > 0 && !_isWhitespace(line[currentIndex - 1])));
 
     return currentIndex;
 }
@@ -77,7 +85,7 @@ int EditorApp::findStartOfWordR(MyString &line, int startIndex)
     do
     {
         ++currentIndex;
-    } while ((currentIndex < line.length() && !isWhitespace(line[currentIndex - 1])));
+    } while ((currentIndex < line.length() && !_isWhitespace(line[currentIndex - 1])));
 
     return currentIndex;
 }

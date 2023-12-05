@@ -1,6 +1,6 @@
 #include "EditorView.h"
 
-EditorView::EditorView(EditorApp &buffer) : editorBuffer(buffer)
+EditorView::EditorView(EditorApp &buffer) : _editorApp(buffer)
 {
     ncurses.getSize(&_screenSizeX, &_screenSizeY);
     _contentWindowId = ncurses.addWindow(0, 0, _screenSizeY - 1, _screenSizeX, 0);
@@ -34,7 +34,7 @@ unsigned int EditorView::getContentWindowId()
 void EditorView::displayAllText()
 {
     bool f = true;
-    for (const auto lineBuffer : *editorBuffer.returnText())
+    for (const auto lineBuffer : *_editorApp.returnText())
     {
         for (const auto line : lineBuffer)
         {
@@ -58,10 +58,10 @@ void EditorView::displayAllText()
 void EditorView::moveCursorBegWord(bool isContent)
 {
     WindowCords newCords;
-    auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+    auto textLine = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine];
 
     newCords.y = _contentWindowCords.y;
-    newCords.x = editorBuffer.findStartOfWordL(textLine, _contentWindowCords.x);
+    newCords.x = _editorApp.findStartOfWordL(textLine, _contentWindowCords.x);
 
     if (newCords.x < 0)
     {
@@ -71,22 +71,22 @@ void EditorView::moveCursorBegWord(bool isContent)
         if (_contentWindowCords.y != 0)
         {
 
-            decCurrentLine();
-            auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+            _decCurrentLine();
+            auto textLine = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine];
 
-            _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
+            _contentWindowCords.x = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine].length();
 
-            newCords.x = editorBuffer.findStartOfWordL(textLine, _contentWindowCords.x);
+            newCords.x = _editorApp.findStartOfWordL(textLine, _contentWindowCords.x);
             newCords.y -= 1;
         }
         else
         {
-            handleScrollUp();
-            auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+            _handleScrollUp();
+            auto textLine = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine];
 
-            _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
+            _contentWindowCords.x = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine].length();
 
-            newCords.x = editorBuffer.findStartOfWordL(textLine, _contentWindowCords.x);
+            newCords.x = _editorApp.findStartOfWordL(textLine, _contentWindowCords.x);
             newCords.y -= 1;
             return;
         }
@@ -99,21 +99,21 @@ void EditorView::moveCursorBegWord(bool isContent)
 void EditorView::moveCursorEndWord(bool isContent)
 {
     WindowCords newCords;
-    auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+    auto textLine = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine];
 
     newCords.y = _contentWindowCords.y;
-    newCords.x = editorBuffer.findStartOfWordR(textLine, _contentWindowCords.x);
+    newCords.x = _editorApp.findStartOfWordR(textLine, _contentWindowCords.x);
 
     if (newCords.x >= textLine.length())
     {
-        if (_currentTextLine >= editorBuffer.getLinesNumber() - 1)
+        if (_currentTextLine >= _editorApp.getRealLinesNumbers() - 1)
             return;
 
         if (_contentWindowCords.y != _screenSizeY-2)
         {
 
-            incCurrentLine();
-            auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+            _incCurrentLine();
+            auto textLine = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine];
 
             _contentWindowCords.x = 0;
 
@@ -122,8 +122,8 @@ void EditorView::moveCursorEndWord(bool isContent)
         }
         else
         {
-            handleScrollDown();
-            auto textLine = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine];
+            _handleScrollDown();
+            auto textLine = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine];
 
             _contentWindowCords.x = 0;
 
@@ -153,7 +153,7 @@ void EditorView::moveCursorEndLine(bool isContent)
 {
     if (isContent)
     {
-        _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
+        _contentWindowCords.x = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine].length();
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
     }
     else
@@ -163,7 +163,16 @@ void EditorView::moveCursorEndLine(bool isContent)
 
 void EditorView::moveCursorLineNumber(int lineNumber)
 {
+    int maxToDisplayLineNumber = _editorApp.getTextToDisplayLinesNumber() - 1;
+    if (lineNumber > maxToDisplayLineNumber) lineNumber = maxToDisplayLineNumber;
 
+    while (_currentTextLine + _currentSubtextLine != lineNumber)
+    {
+        if (lineNumber > _currentTextLine + _currentSubtextLine)
+            moveCursorDown(true);
+        else
+            moveCursorUp(true);
+    }
 }
 
 void EditorView::moveCursorRight(bool isContent)
@@ -171,13 +180,13 @@ void EditorView::moveCursorRight(bool isContent)
     if (isContent)
     {
         _contentWindowCords.x += 1;
-        auto line = (*editorBuffer.returnLine(_currentTextLine));
+        auto line = (*_editorApp.returnLine(_currentTextLine));
         if (_contentWindowCords.x > line[_currentSubtextLine].length())
         {
             if (_currentSubtextLine < line.size() - 1)
             {
                 _contentWindowCords.x = _screenSizeX;
-                incCurrentLine();
+                _incCurrentLine();
             }
             else
             {
@@ -203,8 +212,8 @@ void EditorView::moveCursorLeft(bool isContent)
         {
             if (_currentSubtextLine > 0)
             {
-                decCurrentLine();
-                _contentWindowCords.x = (*editorBuffer.returnLine(_currentTextLine))[_currentSubtextLine].length();
+                _decCurrentLine();
+                _contentWindowCords.x = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine].length();
                 _contentWindowCords.y -= 1;
             }
             else
@@ -231,11 +240,11 @@ void EditorView::moveCursorUp(bool isContent)
         scrl = ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
         if (scrl == ScrollingCode::SCROLL_UP)
         {
-            handleScrollUp();
+            _handleScrollUp();
         }
         if (scrl == ScrollingCode::STAY)
         {
-            decCurrentLine();
+            _decCurrentLine();
         }
         if (_fixCordXOutsideString()) ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
 
@@ -249,7 +258,7 @@ void EditorView::moveCursorUp(bool isContent)
 
 bool EditorView::_fixCordXOutsideString()
 {
-    auto lineCurr = (*editorBuffer.returnLine(_currentTextLine));
+    auto lineCurr = (*_editorApp.returnLine(_currentTextLine));
     if (_contentWindowCords.x > lineCurr[_currentSubtextLine].length())
     {
         _contentWindowCords.x = lineCurr[_currentSubtextLine].length();
@@ -267,11 +276,11 @@ void EditorView::moveCursorDown(bool isContent)
         scrl = ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
         if (scrl == ScrollingCode::SCROLL_DOWN)
         {
-            handleScrollDown();
+            _handleScrollDown();
         }
         if (scrl == ScrollingCode::STAY)
         {
-            incCurrentLine();
+            _incCurrentLine();
         }
         if (_fixCordXOutsideString()) ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
     }
@@ -282,7 +291,7 @@ void EditorView::moveCursorDown(bool isContent)
     }
 }
 
-bool EditorView::handleScrollUp()
+bool EditorView::_handleScrollUp()
 {
     _currentSubtextLine -= 1;
     if (_currentSubtextLine < 0)
@@ -296,27 +305,27 @@ bool EditorView::handleScrollUp()
         }
     }
     ncurses.scrollWindowUp(getContentWindowId());
-    auto textLine = (*editorBuffer.returnLine(_currentTextLine));
+    auto textLine = (*_editorApp.returnLine(_currentTextLine));
     ncurses.writeWindow(getContentWindowId(), textLine[_currentSubtextLine]);
     ncurses.refreshWindow(getContentWindowId());
     return false;
 }
 
-bool EditorView::handleScrollDown()
+bool EditorView::_handleScrollDown()
 {
-    if (_currentTextLine + 1 >= (editorBuffer.getLinesNumber()))
+    if (_currentTextLine + 1 >= (_editorApp.getRealLinesNumbers()))
     {
         _currentSubtextLine = 0;
         return true;
     }
 
-    auto textLine = (*editorBuffer.returnLine(_currentTextLine));
+    auto textLine = (*_editorApp.returnLine(_currentTextLine));
     _currentSubtextLine += 1;
     if (_currentSubtextLine == textLine.size())
     {
         _currentSubtextLine = 0;
         _currentTextLine += 1;
-        textLine = (*editorBuffer.returnLine(_currentTextLine));
+        textLine = (*_editorApp.returnLine(_currentTextLine));
     }
     ncurses.writeAppendWindow(getContentWindowId(), textLine[_currentSubtextLine]);
     ncurses.refreshWindow(getContentWindowId());
@@ -324,23 +333,23 @@ bool EditorView::handleScrollDown()
 }
 
 // True or false indicates whether changed real line or not
-bool EditorView::incCurrentLine()
+bool EditorView::_incCurrentLine()
 {
-    auto textLine = (*editorBuffer.returnLine(_currentTextLine));
+    auto textLine = (*_editorApp.returnLine(_currentTextLine));
     _currentSubtextLine += 1;
 
     if (_currentSubtextLine >= textLine.size())
     {
         _currentSubtextLine = 0;
         _currentTextLine += 1;
-        if (_currentTextLine >= editorBuffer.getLinesNumber())
+        if (_currentTextLine >= _editorApp.getRealLinesNumbers())
             _currentTextLine -= 1;
         return true;
     }
     return false;
 }
 
-bool EditorView::decCurrentLine()
+bool EditorView::_decCurrentLine()
 {
     _currentSubtextLine -= 1;
     if (_currentSubtextLine < 0)
@@ -348,7 +357,7 @@ bool EditorView::decCurrentLine()
         _currentTextLine -= 1;
         if (_currentTextLine < 0)
             _currentTextLine = 0;
-        auto textLine = (*editorBuffer.returnLine(_currentTextLine));
+        auto textLine = (*_editorApp.returnLine(_currentTextLine));
         _currentSubtextLine = textLine.size() - 1;
         return true;
     }

@@ -30,24 +30,24 @@ public:
     void moveCursorEndWord(bool isContent);
     void moveCursorLineNumber(int lineNumber);
 
-    bool handleScrollDown();
-    bool handleScrollUp();
 
-    bool incCurrentLine();
-    bool decCurrentLine();
 
 
     void endView();
 
     NcursesWrapper ncurses;
-    EditorApp& editorBuffer;
 private:
+    EditorApp& _editorApp;
     int _firstLine, _lastLine, _currentTextLine, _currentSubtextLine;
     WindowCords _commandWindowCords, _contentWindowCords;
     unsigned int _screenSizeX, _screenSizeY;
     unsigned int _commandWindowId, _contentWindowId;
 
     bool _fixCordXOutsideString();
+    bool _incCurrentLine();
+    bool _decCurrentLine();
+    bool _handleScrollDown();
+    bool _handleScrollUp();
 };
 
 #endif

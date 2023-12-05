@@ -67,6 +67,7 @@ void EditorController::handleNavigationInput()
         break;
     case 'G':
         _view.moveCursorLineNumber(_app.vectorOfIntsToInt(_currentLineNumberToGo));
+        _currentLineNumberToGo.clear();
         break;
     case 'r':
         /* code */
