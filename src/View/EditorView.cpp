@@ -163,15 +163,17 @@ void EditorView::moveCursorEndLine(bool isContent)
 
 void EditorView::moveCursorLineNumber(int lineNumber)
 {
-    int maxToDisplayLineNumber = _editorApp.getTextToDisplayLinesNumber() - 3;
+    int maxToDisplayLineNumber = _editorApp.getTextToDisplayLinesNumber() - 1;
     if (lineNumber > maxToDisplayLineNumber) lineNumber = maxToDisplayLineNumber;
 
     while (_currentTextLine + _currentSubtextLine != lineNumber)
     {
+
         if (lineNumber > _currentTextLine + _currentSubtextLine)
             moveCursorDown(true);
         else
             moveCursorUp(true);
+        if (_currentTextLine + 1 == _editorApp.getRealLinesNumbers() && _currentSubtextLine + 1 == _editorApp.returnLine(_currentTextLine)->size()) break;
     }
 }
 
@@ -307,12 +309,12 @@ bool EditorView::_handleScrollUp()
     if (_currentSubtextLine < 0)
     {
         _currentTextLine -= 1;
-        _currentSubtextLine = 0;
         if (_currentTextLine < 0)
         {
             _currentTextLine = 0;
             return true;
         }
+        _currentSubtextLine = _editorApp.returnLine(_currentTextLine)->size()-1;
     }
     ncurses.scrollWindowUp(getContentWindowId());
     auto textLine = (*_editorApp.returnLine(_currentTextLine));
@@ -323,13 +325,13 @@ bool EditorView::_handleScrollUp()
 
 bool EditorView::_handleScrollDown()
 {
-    if (_currentTextLine + 1 >= (_editorApp.getRealLinesNumbers()))
+    auto textLine = (*_editorApp.returnLine(_currentTextLine));
+    if (_currentTextLine + 1 >= (_editorApp.getRealLinesNumbers()) && _currentSubtextLine + 1 >= textLine.size())
     {
-        _currentSubtextLine = 0;
+        // _currentSubtextLine = 0;
         return true;
     }
 
-    auto textLine = (*_editorApp.returnLine(_currentTextLine));
     _currentSubtextLine += 1;
     if (_currentSubtextLine == textLine.size())
     {
