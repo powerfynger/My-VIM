@@ -30,6 +30,9 @@ public:
     void moveCursorEndWord(bool isContent);
     void moveCursorLineNumber(int lineNumber);
 
+    void moveCursorFirstPage();
+    void moveCursorLastPage();
+
 
 
 

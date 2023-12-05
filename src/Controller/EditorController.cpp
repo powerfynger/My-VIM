@@ -3,6 +3,9 @@
 EditorController::EditorController(EditorApp &app, EditorView &view) : _app(app), _view(view)
 {
     _mode = EditorMode::Navigation;
+    _previousKeys.push_back('w');
+    _previousKeys.push_back('w');
+    _previousKeys.push_back('w');
 }
 
 EditorMode EditorController::getMode()
@@ -43,6 +46,7 @@ void EditorController::handleNavigationInput()
     {
     case KEY_UP:
         _view.moveCursorUp(true);
+        // _previousKeys
         break;
     case KEY_DOWN:
         _view.moveCursorDown(true);
@@ -66,8 +70,16 @@ void EditorController::handleNavigationInput()
         _view.moveCursorEndWord(true);
         break;
     case 'G':
+        if (_currentLineNumberToGo.empty())
+        {
+            _view.moveCursorLastPage();
+            break;
+        }
         _view.moveCursorLineNumber(_app.vectorOfIntsToInt(_currentLineNumberToGo));
         _currentLineNumberToGo.clear();
+        break;
+    case 'g':
+        if (_previousKeys[2] == 'g') _view.moveCursorFirstPage();
         break;
     case 'r':
         /* code */
@@ -99,9 +111,11 @@ void EditorController::handleNavigationInput()
         break;
     default:
         // Needed by the command go to line number; Probably need to change all number of line types to unsigned long long
-        if (_currentLineNumberToGo.size() <= _maxLineNumberLenght && (c >= '0' && c <= '9')) _currentLineNumberToGo.push_back(c);
+        if (_currentLineNumberToGo.size() <= _maxLineNumberLenght && (c >= '0' && c <= '9'))
+            _currentLineNumberToGo.push_back(c);
         break;
     }
+    _processKey(c);
 }
 
 void EditorController::handleWriteInput()
@@ -114,4 +128,11 @@ void EditorController::handleFindInput()
 
 void EditorController::handleCommandInput()
 {
+}
+
+void EditorController::_processKey(int c)
+{
+    _previousKeys.push_back(c);
+    _previousKeys[0] = _previousKeys[1]; _previousKeys[1] = _previousKeys[2]; _previousKeys[2] = _previousKeys[3];
+    _previousKeys.pop_back();
 }

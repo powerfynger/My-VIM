@@ -28,10 +28,13 @@ private:
     void handleFindInput();
 
     std::vector<int> _currentLineNumberToGo;
+    std::vector<int> _previousKeys;
     const int _maxLineNumberLenght = 10;
     EditorMode _mode;
     EditorApp &_app;
     EditorView &_view;
+
+    void _processKey(int c);
 };
 
 #endif
