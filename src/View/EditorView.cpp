@@ -15,14 +15,17 @@ unsigned int EditorView::getScrSizeX()
 {
     return _screenSizeX;
 }
+
 unsigned int EditorView::getScrSizeY()
 {
     return _screenSizeY;
 }
+
 unsigned int EditorView::getCmdWindowId()
 {
     return _commandWindowId;
 }
+
 unsigned int EditorView::getContentWindowId()
 {
     return _contentWindowId;
@@ -93,7 +96,6 @@ void EditorView::moveCursorBegWord(bool isContent)
     ncurses.setCursor(getContentWindowId(), &newCords.y, &newCords.x);
 }
 
-
 void EditorView::moveCursorEndWord(bool isContent)
 {
     WindowCords newCords;
@@ -159,6 +161,11 @@ void EditorView::moveCursorEndLine(bool isContent)
     }
 }
 
+void EditorView::moveCursorLineNumber(int lineNumber)
+{
+    
+}
+
 void EditorView::moveCursorRight(bool isContent)
 {
     if (isContent)
@@ -186,6 +193,7 @@ void EditorView::moveCursorRight(bool isContent)
         ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
     }
 }
+
 void EditorView::moveCursorLeft(bool isContent)
 {
     if (isContent)
@@ -238,7 +246,6 @@ void EditorView::moveCursorUp(bool isContent)
         ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
     }
 }
-
 
 bool EditorView::_fixCordXOutsideString()
 {

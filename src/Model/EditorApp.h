@@ -4,6 +4,7 @@
 #include "../Utils/MyString.h"
 #include <fstream>
 #include <vector>
+#include <limits>
 
 class Buffer
 {
@@ -30,8 +31,9 @@ class EditorApp
 {
 public:
     explicit EditorApp(MyString &fileName);
-    ~EditorApp();
     void readToBuffer(unsigned int maxLineLen);
+    int vectorOfIntsToInt(const std::vector<int>& vector);
+    ~EditorApp();
 
     Buffer buf;
 private:

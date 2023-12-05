@@ -64,6 +64,10 @@ void EditorController::handleNavigationInput()
         break;
     case 'w':
         _view.moveCursorEndWord(true);
+        break;
+    case 'G':
+        _view.moveCursorLineNumber(_app.vectorOfIntsToInt(_currentLineNumberToGo));
+        break;
     case 'r':
         /* code */
         break;
@@ -88,10 +92,13 @@ void EditorController::handleNavigationInput()
     case '/':
         /* code */
         break;
-    default:
-        // DEBUG PURPOSE ONLY
+    case 'c':
         _view.ncurses.endNcurses();
         exit(EXIT_SUCCESS);
+        break;
+    default:
+        // Needed by the command go to line number; Probably need to change all number of line types to unsigned long long
+        if (_currentLineNumberToGo.size() <= _maxLineNumberLenght && (c >= '0' && c <= '9')) _currentLineNumberToGo.push_back(c);
         break;
     }
 }

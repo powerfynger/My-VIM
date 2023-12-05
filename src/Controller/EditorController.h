@@ -4,6 +4,7 @@
 #include "../Model/EditorApp.h"
 #include "../View/EditorView.h"
 
+
 enum class EditorMode
 {
     Navigation,
@@ -26,6 +27,8 @@ private:
     void handleCommandInput();
     void handleFindInput();
 
+    std::vector<int> _currentLineNumberToGo;
+    const int _maxLineNumberLenght = 10;
     EditorMode _mode;
     EditorApp &_app;
     EditorView &_view;
