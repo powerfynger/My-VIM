@@ -10,7 +10,7 @@
 class EditorView
 {
 public:
-    EditorView(Buffer& buf);
+    EditorView(EditorApp& app);
 
     unsigned int getScrSizeX();
     unsigned int getScrSizeY();
@@ -40,7 +40,7 @@ public:
     void endView();
 
     NcursesWrapper ncurses;
-    Buffer& editorBuffer;
+    EditorApp& editorBuffer;
 private:
     int _firstLine, _lastLine, _currentTextLine, _currentSubtextLine;
     WindowCords _commandWindowCords, _contentWindowCords;

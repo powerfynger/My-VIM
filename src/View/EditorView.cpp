@@ -1,6 +1,6 @@
 #include "EditorView.h"
 
-EditorView::EditorView(Buffer &buffer) : editorBuffer(buffer)
+EditorView::EditorView(EditorApp &buffer) : editorBuffer(buffer)
 {
     ncurses.getSize(&_screenSizeX, &_screenSizeY);
     _contentWindowId = ncurses.addWindow(0, 0, _screenSizeY - 1, _screenSizeX, 0);
@@ -163,7 +163,7 @@ void EditorView::moveCursorEndLine(bool isContent)
 
 void EditorView::moveCursorLineNumber(int lineNumber)
 {
-    
+
 }
 
 void EditorView::moveCursorRight(bool isContent)

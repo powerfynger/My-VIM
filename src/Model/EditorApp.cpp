@@ -1,10 +1,7 @@
 #include "EditorApp.h"
 
-Buffer::Buffer()
-{
-}
 
-void Buffer::readText(std::fstream &file, unsigned int maxLineLen)
+void EditorApp::readText(std::fstream &file, unsigned int maxLineLen)
 {
     MyString line;
     std::vector<MyString> lineBuffer;
@@ -33,29 +30,29 @@ void Buffer::readText(std::fstream &file, unsigned int maxLineLen)
     _textLinesNumber = _text.size();
 }
 
-unsigned int Buffer::getLinesNumber()
+unsigned int EditorApp::getLinesNumber()
 {
     return _textLinesNumber;
 }
 
-std::vector<std::vector<MyString>> *Buffer::returnText()
+std::vector<std::vector<MyString>> *EditorApp::returnText()
 {
     return &_text;
 }
 
-std::vector<MyString> *Buffer::returnLine(unsigned int lineIndex)
+std::vector<MyString> *EditorApp::returnLine(unsigned int lineIndex)
 {
     if (lineIndex >= _textLinesNumber)
         return nullptr;
     return &_text[lineIndex];
 }
 
-bool Buffer::isWhitespace(char c)
+bool EditorApp::isWhitespace(char c)
 {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
 
-int Buffer::findStartOfWordL(MyString &line, int startIndex)
+int EditorApp::findStartOfWordL(MyString &line, int startIndex)
 {
     int currentIndex = startIndex;
     if (currentIndex >= line.length())
@@ -70,7 +67,7 @@ int Buffer::findStartOfWordL(MyString &line, int startIndex)
     return currentIndex;
 }
 
-int Buffer::findStartOfWordR(MyString &line, int startIndex)
+int EditorApp::findStartOfWordR(MyString &line, int startIndex)
 {
     int currentIndex = startIndex;
     if (currentIndex >= line.length())
@@ -92,7 +89,7 @@ EditorApp::EditorApp(MyString &fileName)
 
 void EditorApp::readToBuffer(unsigned int maxLineLen)
 {
-    buf.readText(_fileDescr, maxLineLen);
+    readText(_fileDescr, maxLineLen);
 }
 
 int EditorApp::vectorOfIntsToInt(const std::vector<int> &vector)

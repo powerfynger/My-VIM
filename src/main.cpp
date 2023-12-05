@@ -14,7 +14,7 @@ int main(int argc, char **argv)
         // MyString fileName("../src/main.cpp");
         MyString fileName("aa");
         EditorApp app(fileName);
-        EditorView view(app.buf);
+        EditorView view(app);
         EditorController controller(app, view);
         app.readToBuffer(view.getScrSizeX() - 2);
         view.displayAllText();
