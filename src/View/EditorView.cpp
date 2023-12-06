@@ -165,6 +165,7 @@ void EditorView::moveCursorLineNumber(int lineNumber)
 {
     int maxToDisplayLineNumber = _editorApp.getTextToDisplayLinesNumber() - 1;
     if (lineNumber > maxToDisplayLineNumber) lineNumber = maxToDisplayLineNumber;
+    if (lineNumber < 0) lineNumber = 0;
 
     while (_currentTextLine + _currentSubtextLine != lineNumber)
     {
@@ -185,6 +186,16 @@ void EditorView::moveCursorFirstPage()
 void EditorView::moveCursorLastPage()
 {
     moveCursorLineNumber(_editorApp.getTextToDisplayLinesNumber());
+}
+
+void EditorView::moveCursorPageUp()
+{
+    moveCursorLineNumber(_currentSubtextLine + _currentTextLine - _screenSizeY-2);
+}
+
+void EditorView::moveCursorPageDown()
+{   
+    moveCursorLineNumber(_currentSubtextLine + _currentTextLine + _screenSizeY-2);
 }
 
 void EditorView::moveCursorRight(bool isContent)

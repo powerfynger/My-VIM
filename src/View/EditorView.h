@@ -32,6 +32,8 @@ public:
 
     void moveCursorFirstPage();
     void moveCursorLastPage();
+    void moveCursorPageUp();
+    void moveCursorPageDown();
 
 
 

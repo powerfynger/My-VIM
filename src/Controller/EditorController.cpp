@@ -81,6 +81,12 @@ void EditorController::handleNavigationInput()
     case 'g':
         if (_previousKeys[2] == 'g') _view.moveCursorFirstPage();
         break;
+    case KEY_PPAGE: // Page Up
+        _view.moveCursorPageUp();
+        break;
+    case KEY_NPAGE: // Page down
+        _view.moveCursorPageDown();
+        break;
     case 'r':
         /* code */
         break;
