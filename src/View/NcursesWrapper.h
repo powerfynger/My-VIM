@@ -32,8 +32,10 @@ public:
     void refreshWindow(unsigned int windowId);
     void writeWindow(unsigned int windowId, MyString str);
     void writeAppendWindow(unsigned int windowId, MyString str);
+    void writeToCurrentLine(unsigned int windowId, MyString str);
     void scrollWindowUp(unsigned int windowId);
     void writeAppendCharWindow(unsigned int windowId, int y, int x,char ch);
+    void clearWindowDown(unsigned int windowId);
     ScrollingCode setCursor(int windowId, int* y, int* x);
     WindowCords getCursorCords(unsigned int windowId);
     int getInput();

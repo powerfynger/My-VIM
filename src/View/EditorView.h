@@ -7,6 +7,8 @@
 #include <memory>
 #include <thread>
 
+class EditorApp;
+
 class EditorView
 {
 public:
@@ -16,7 +18,19 @@ public:
     unsigned int getScrSizeY();
     unsigned int getCmdWindowId();
     unsigned int getContentWindowId();
+    
+    unsigned int getContentCurrentLineX();
 
+    int getCurrentTextLine();
+    int getCurrentSubTextLine();
+    
+    bool incCurrentLine();
+    bool decCurrentLine();
+
+    // void setCurrentTextLine(int);
+    // void setCurrentSubTextLine(int);
+
+    void updateContentLine(int changedNumbersOfLine);
     void displayAllText();
 
     void moveCursorRight(bool isContent);
@@ -49,8 +63,7 @@ private:
     unsigned int _commandWindowId, _contentWindowId;
 
     bool _fixCordXOutsideString();
-    bool _incCurrentLine();
-    bool _decCurrentLine();
+
     bool _handleScrollDown();
     bool _handleScrollUp();
 };

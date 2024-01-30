@@ -15,6 +15,7 @@ int main(int argc, char **argv)
         MyString fileName("aa");
         EditorApp app(fileName);
         EditorView view(app);
+        app.addView(&view);
         EditorController controller(app, view);
         app.readToBuffer(view.getScrSizeX() - 2);
         view.displayAllText();

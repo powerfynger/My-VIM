@@ -108,6 +108,47 @@ void NcursesWrapper::writeAppendWindow(unsigned int windowId, MyString str){
     // wmove(cur_window, cords.y + 1, 0);
 }
 
+void NcursesWrapper::writeToCurrentLine(unsigned int windowId, MyString str)
+{
+    WindowCords cords, oldCords;
+    WINDOW *cur_window = _windows[windowId];
+    getyx(cur_window, cords.y, cords.x);
+    oldCords = cords;
+    cords.x = 0;
+    setCursor(windowId, &cords.y, &cords.x);
+    int len_to_erase = getmaxx(cur_window) - cords.x;
+    for (int i = 0; i < len_to_erase; i++) {
+        mvwdelch(cur_window, cords.y, cords.x);
+    }
+    wprintw(cur_window, "%s", str.c_str());
+    cords = oldCords;
+    setCursor(windowId, &cords.y, &cords.x);
+}
+
+void NcursesWrapper::clearWindowDown(unsigned int windowId)
+{
+    WindowCords cords, oldCords;
+    WINDOW *cur_window = _windows[windowId];
+    getyx(cur_window, cords.y, cords.x);
+    WindowCords maxCords;
+    getmaxyx(cur_window, maxCords.y, maxCords.x);
+
+    oldCords = cords;
+    cords.x = 0;
+    int len_to_erase = getmaxx(cur_window) - cords.x;
+    while (cords.y < maxCords.y){
+        setCursor(windowId, &cords.y, &cords.x);
+        for (int i = 0; i < len_to_erase; i++) {
+            mvwdelch(cur_window, cords.y, cords.x);
+        }
+        cords.y++;
+    }
+    cords = oldCords;
+    setCursor(windowId, &cords.y, &cords.x);
+}
+
+
+
 ScrollingCode NcursesWrapper::setCursor(int windowId, int* y, int* x)
 {
     WindowCords maxCords, currentCords;
@@ -172,6 +213,7 @@ void NcursesWrapper::writeAppendCharWindow(unsigned int windowId, int y, int x, 
 
 int NcursesWrapper::getInput()
 {
+    timeout(10000);
     return getch();
 }
 

@@ -97,6 +97,7 @@ char *my_substr(char *str, int index, int count)
     int tmp_len = count;
     int tmp_cap = tmp_len + 1;
     char *tmp = new char[tmp_cap];
+    tmp[tmp_len] = 0;
     for (int i = 0; i < tmp_len; i++)
     {
         tmp[i] = str[i + index];
@@ -185,7 +186,7 @@ MyString::MyString(const MyString &data)
 MyString::~MyString()
 {
     delete[] str_;
-}
+} 
 /*
 OPERATORS
 */
@@ -435,6 +436,7 @@ void MyString::insert(int index, std::string string, int count)
 }
 void MyString::erase(int index, int count)
 {
+    if (len_ <= 0 || count <= 0) return;
     char* tmp = new char[len_ - count];
     my_strcpy(tmp, my_substr(str_, 0, index));
     my_strcat(tmp, my_substr(str_, index + count, len_));

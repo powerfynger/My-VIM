@@ -46,7 +46,6 @@ void EditorController::handleNavigationInput()
     {
     case KEY_UP:
         _view.moveCursorUp(true);
-        // _previousKeys
         break;
     case KEY_DOWN:
         _view.moveCursorDown(true);
@@ -67,6 +66,16 @@ void EditorController::handleNavigationInput()
         _view.moveCursorBegWord(true);
         break;
     case 'w':
+        if(_previousKeys[2] == 'y')
+        {   
+            _app.copyCurrentWordToBuffer();
+            break;
+        }
+        if (_previousKeys[1] == 'd' && _previousKeys[2] == 'i')
+        {
+            _app.deleteWordAfterCursor();
+            break;
+        }
         _view.moveCursorEndWord(true);
         break;
     case 'G':
@@ -88,21 +97,26 @@ void EditorController::handleNavigationInput()
         _view.moveCursorPageDown();
         break;
     case 'r':
-        /* code */
+        // Debug purpose
+        _app.rebalanceLine(_view.getCurrentTextLine());
         break;
-    case 'A':
-        /* code */
+    case 'x':
+        _app.deleteCharAfterCursor();
         break;
-    case 'S':
-        /* code */
+    case 'y':
+        _app.copyCurrentLineToBuffer();
         break;
-    case 'I':
-        /* code */
+    case 'p':
+        _app.pasteUserBuffer();
         break;
-    case 'i':
-        /* code */
+    case 'd':
+        if (_previousKeys[2] == 'd')
+        {
+            _app.copyCurrentLineToBuffer();
+            _app.deleteCurrentLine();
+        }
         break;
-    case ':':
+    case 'ш':
         /* code */
         break;
     case '?':
