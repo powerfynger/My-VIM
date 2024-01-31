@@ -216,7 +216,6 @@ void EditorApp::deleteCharAfterCursor()
 {
     
     _editorView->updateContentLine(_deleteChar(_editorView->getCurrentTextLine(), _editorView->getCurrentSubTextLine(), _editorView->getContentCurrentLineX()));
-
 }
 
 void EditorApp::deleteWordAfterCursor()

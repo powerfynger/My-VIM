@@ -96,10 +96,6 @@ void EditorController::handleNavigationInput()
     case KEY_NPAGE: // Page down
         _view.moveCursorPageDown();
         break;
-    case 'r':
-        // Debug purpose
-        _app.rebalanceLine(_view.getCurrentTextLine());
-        break;
     case 'x':
         _app.deleteCharAfterCursor();
         break;
@@ -132,6 +128,10 @@ void EditorController::handleNavigationInput()
         _app.insertEmptyLine();
         _view.moveCursorStartSubLine(true);
         _setMode(EditorMode::Write);
+        break;
+    case 'r':
+        _app.deleteCharAfterCursor();
+        handleWriteInput();
         break;
     case '?':
         /* code */
