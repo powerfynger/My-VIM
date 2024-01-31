@@ -167,7 +167,7 @@ int EditorApp::rebalanceLine(int lineNumber)
         {
             // Create new line with only one char -- last char of the current full substring and add it to the substrings
             MyString newLine;
-            newLine.append(1, _text[lineNumber][subLineNumber].length() - 1);
+            newLine.append(1, _text[lineNumber][subLineNumber][_text[lineNumber][subLineNumber].size()-1]);
             _text[lineNumber][subLineNumber].erase(_text[lineNumber][subLineNumber].length() - 1, 1);
             _text[lineNumber].push_back(newLine);
             _textToDisplayLinesNumber++;
@@ -176,7 +176,7 @@ int EditorApp::rebalanceLine(int lineNumber)
         
 
         // Delete the last char of current substring and add it to the begin of next; Rebalance can be needed again  
-        _text[lineNumber][subLineNumber + 1].insert(0, 1, _text[lineNumber][subLineNumber].length() - 1);
+        _text[lineNumber][subLineNumber + 1].insert(0, 1, _text[lineNumber][subLineNumber][_text[lineNumber][subLineNumber].size()-1]);
         _text[lineNumber][subLineNumber].erase(_text[lineNumber][subLineNumber].length() - 1, 1);
         rebalanceLine(lineNumber);
         return 1;
@@ -202,6 +202,13 @@ int EditorApp::_deleteChar(unsigned int lineNumber, unsigned int subLineNumber, 
 {
     MyString* aa = &_text[lineNumber][subLineNumber];
     _text[lineNumber][subLineNumber].erase(charIndex, 1);
+    return rebalanceLine(lineNumber);
+}
+
+int EditorApp::_insertChar(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex)
+{
+    MyString* aa = &_text[lineNumber][subLineNumber];
+    _text[lineNumber][subLineNumber].insert(charIndex, 1, c);
     return rebalanceLine(lineNumber);
 }
 // 1234 68901 121314
@@ -287,6 +294,18 @@ void EditorApp::copyCurrentWordToBuffer()
     _userBuffer.clear();
     _userBuffer.push_back(tmp);
 }
+
+void EditorApp::insertCharAfterCursor(int c)
+{
+    _editorView->updateContentLine(_insertChar(
+        _editorView->getCurrentTextLine(), 
+        _editorView->getCurrentSubTextLine(), 
+        c, 
+        _editorView->getContentCurrentLineX()
+    ));
+    _editorView->moveCursorRight(true);
+}
+
 
 EditorApp::~EditorApp()
 {

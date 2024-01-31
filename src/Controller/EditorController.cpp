@@ -13,7 +13,7 @@ EditorMode EditorController::getMode()
     return _mode;
 }
 
-void EditorController::setMode(EditorMode mode)
+void EditorController::_setMode(EditorMode mode)
 {
     _mode = mode;
 }
@@ -116,8 +116,8 @@ void EditorController::handleNavigationInput()
             _app.deleteCurrentLine();
         }
         break;
-    case 'ш':
-        /* code */
+    case 'i':
+        _setMode(EditorMode::Write);
         break;
     case '?':
         /* code */
@@ -140,6 +140,31 @@ void EditorController::handleNavigationInput()
 
 void EditorController::handleWriteInput()
 {
+    int c = _view.ncurses.getInput();
+     switch (c)
+    {
+    case KEY_UP:
+        _view.moveCursorUp(true);
+        break;
+    case KEY_DOWN:
+        _view.moveCursorDown(true);
+        break;
+    case KEY_LEFT:
+        _view.moveCursorLeft(true);
+        break;
+    case KEY_RIGHT:
+        _view.moveCursorRight(true);
+        break;
+    // ESQ     
+    case 27:
+        _setMode(EditorMode::Navigation);
+        return;
+    default:
+        _app.insertCharAfterCursor(c);
+        break;
+    }
+
+
 }
 
 void EditorController::handleFindInput()

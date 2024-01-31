@@ -51,7 +51,7 @@ void EditorView::updateContentLine(int changedNumbersOfLine)
     {
         ncurses.writeToCurrentLine(getContentWindowId(), (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine]);
     }
-    else if (changedNumbersOfLine == -1)
+    else if (changedNumbersOfLine == -1 || changedNumbersOfLine == 1)
     {
         // Дошли до последней подстроки в длинной строке, на текущую линию
         // Нужно вывести следующую длинную строку

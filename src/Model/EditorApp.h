@@ -37,6 +37,7 @@ public:
     int rebalanceLine(int lineNumber);
     
     void deleteCharAfterCursor();
+    void insertCharAfterCursor(int);
     void deleteWordAfterCursor();
 
     void copyCurrentLineToBuffer();
@@ -64,6 +65,7 @@ private:
     void _readText(std::fstream& file);
     bool _isWhitespace(char c);
     int _deleteChar(unsigned int lineNumber, unsigned int subLineNumber, unsigned int charIndex);
+    int _insertChar(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex);
     void _insertNewLine(std::vector<MyString> line);
     void _deleteLine(int lineNumber);
 

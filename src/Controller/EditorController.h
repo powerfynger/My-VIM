@@ -18,7 +18,7 @@ class EditorController
 public:
     explicit EditorController(EditorApp &app, EditorView &view);
     EditorMode getMode();
-    void setMode(EditorMode mode);
+    void _setMode(EditorMode mode);
     void handleInput();
 
 private:
