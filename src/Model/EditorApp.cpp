@@ -306,6 +306,12 @@ void EditorApp::insertCharAfterCursor(int c)
     _editorView->moveCursorRight(true);
 }
 
+void EditorApp::insertEmptyLine()
+{
+    std::vector<MyString> tmp;
+    _insertNewLine(tmp);
+}
+
 
 EditorApp::~EditorApp()
 {

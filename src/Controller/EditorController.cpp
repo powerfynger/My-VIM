@@ -119,6 +119,19 @@ void EditorController::handleNavigationInput()
     case 'i':
         _setMode(EditorMode::Write);
         break;
+    case 'I':
+        _view.moveCursorStartLine(true);
+        _setMode(EditorMode::Write);
+        break;
+    case 'S':
+        _view.moveCursorEndLine(true);
+        _setMode(EditorMode::Write);
+        break;
+    case 'A':
+        _app.deleteCurrentLine();
+        _app.insertEmptyLine();
+        _setMode(EditorMode::Write);
+        break;
     case '?':
         /* code */
         break;

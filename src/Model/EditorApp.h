@@ -21,23 +21,12 @@ public:
 
     int findStartOfWordL(MyString& line, int startIndex);
     int findStartOfWordR(MyString& line, int startIndex);
-    /* 
-    TODO: 
-    проверяет длину подстрок и если необходимо удаляет или создает
-    новые подстроки в зависимости от того стало ли символов больше
-    или меньше если же не нужно то просто перемещает
-    символы из одной подстроки в другую
 
-    потребует дополнительные методы для добавления/удаления строк
-
-    данный метод должен вызываться после изменения пользователем строки, т.е.
-    нажатие кнопки --> проверка корректности --> изменение строки --> данный метод
-    в связи с этим производит лишь одну ребалансировку, т.е. одно действие
-    */
     int rebalanceLine(int lineNumber);
     
     void deleteCharAfterCursor();
     void insertCharAfterCursor(int);
+    void insertEmptyLine();
     void deleteWordAfterCursor();
 
     void copyCurrentLineToBuffer();
