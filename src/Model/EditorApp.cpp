@@ -194,6 +194,7 @@ int EditorApp::rebalanceLine(int lineNumber)
 
         return -1;
     }
+    return 0;
 }
 
 // unsigned int EditorApp::getRealLinesNumbers
@@ -205,9 +206,8 @@ int EditorApp::_deleteChar(unsigned int lineNumber, unsigned int subLineNumber, 
     return rebalanceLine(lineNumber);
 }
 
-int EditorApp::_insertChar(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex)
+int EditorApp::_insertCharToText(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex)
 {
-    MyString* aa = &_text[lineNumber][subLineNumber];
     _text[lineNumber][subLineNumber].insert(charIndex, 1, c);
     return rebalanceLine(lineNumber);
 }
@@ -296,7 +296,7 @@ void EditorApp::copyCurrentWordToBuffer()
 
 void EditorApp::insertCharAfterCursor(int c)
 {
-    _editorView->updateContentLine(_insertChar(
+    _editorView->updateContentLine(_insertCharToText(
         _editorView->getCurrentTextLine(), 
         _editorView->getCurrentSubTextLine(), 
         c, 

@@ -2,7 +2,7 @@
 
 EditorController::EditorController(EditorApp &app, EditorView &view) : _app(app), _view(view)
 {
-    _mode = EditorMode::Navigation;
+    _setMode(EditorMode::Navigation);
     _previousKeys.push_back('w');
     _previousKeys.push_back('w');
     _previousKeys.push_back('w');
@@ -16,6 +16,8 @@ EditorMode EditorController::getMode()
 void EditorController::_setMode(EditorMode mode)
 {
     _mode = mode;
+    if (mode == EditorMode::Navigation) _view.displayStatusNavigation();
+    if (mode == EditorMode::Write) _view.displayStatusWrite();
 }
 
 void EditorController::handleInput()
@@ -133,10 +135,10 @@ void EditorController::handleNavigationInput()
         _app.deleteCharAfterCursor();
         handleWriteInput();
         break;
-    case '?':
-        /* code */
-        break;
     case '/':
+        _setMode(EditorMode::Command);
+        break;
+    case '?':
         /* code */
         break;
     case 'c':
@@ -187,6 +189,24 @@ void EditorController::handleFindInput()
 
 void EditorController::handleCommandInput()
 {
+    int c = _view.ncurses.getInput();
+    switch (c)
+    {
+    case KEY_LEFT:
+        _view.moveCursorLeft(false);
+        break;
+    case KEY_RIGHT:
+        _view.moveCursorRight(false);
+        break;
+    // ESQ     
+    case 27:
+        _setMode(EditorMode::Navigation);
+        return;
+    default:
+        _app.insertCharAfterCursor(c);
+        break;
+    }
+
 }
 
 void EditorController::_processKey(int c)

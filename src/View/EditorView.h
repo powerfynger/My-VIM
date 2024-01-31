@@ -51,7 +51,8 @@ public:
     void moveCursorPageUp();
     void moveCursorPageDown();
 
-
+    void displayStatusNavigation();
+    void displayStatusWrite();
 
 
     void endView();

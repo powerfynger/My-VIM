@@ -44,17 +44,18 @@ public:
 
 private:
     EditorView *_editorView;
-    unsigned int _textLinesNumber;
-    int _textToDisplayLinesNumber;
-    unsigned int _maxLineLength;
+
+    unsigned int _textLinesNumber, _textToDisplayLinesNumber, _maxLineLength;
+
     std::vector<std::vector<MyString>> _text;
-    std::fstream _fileDescr;
     std::vector<MyString> _userBuffer;
+    MyString _commandBuffer;
+    std::fstream _fileDescr;
     
     void _readText(std::fstream& file);
     bool _isWhitespace(char c);
     int _deleteChar(unsigned int lineNumber, unsigned int subLineNumber, unsigned int charIndex);
-    int _insertChar(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex);
+    int _insertCharToText(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex);
     void _insertNewLine(std::vector<MyString> line);
     void _deleteLine(int lineNumber);
 

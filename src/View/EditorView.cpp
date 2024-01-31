@@ -498,3 +498,16 @@ bool EditorView::decCurrentLine()
     }
     return false;
 }
+
+void EditorView::displayStatusNavigation()
+{
+    ncurses.clearWindow(_commandWindowId);
+    ncurses.writeWindow(_commandWindowId, MyString("--NAVIGATION--"));
+    ncurses.refreshWindow(_commandWindowId);
+}
+void EditorView::displayStatusWrite()
+{
+    ncurses.clearWindow(_commandWindowId);
+    ncurses.writeWindow(_commandWindowId, MyString("--WRITE--"));
+    ncurses.refreshWindow(_commandWindowId);
+}
