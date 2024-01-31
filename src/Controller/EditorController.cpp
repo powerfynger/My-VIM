@@ -130,6 +130,7 @@ void EditorController::handleNavigationInput()
     case 'A':
         _app.deleteCurrentLine();
         _app.insertEmptyLine();
+        _view.moveCursorStartSubLine(true);
         _setMode(EditorMode::Write);
         break;
     case '?':

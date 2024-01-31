@@ -259,7 +259,7 @@ void EditorApp::pasteUserBuffer()
 void EditorApp::_insertNewLine(std::vector<MyString> line)
 {   
     // _text[lineNumber][subLineNumber + 1].insert(0, 1, _text[lineNumber][subLineNumber].length() - 1);
-    _text.insert(_text.begin() + _editorView->getCurrentTextLine() + 1, line);
+    _text.insert(_text.begin() + _editorView->getCurrentTextLine(), line);
     _textLinesNumber++;
     _textToDisplayLinesNumber += line.size();
     _editorView->updateContentLine(-1);
@@ -309,6 +309,7 @@ void EditorApp::insertCharAfterCursor(int c)
 void EditorApp::insertEmptyLine()
 {
     std::vector<MyString> tmp;
+    tmp.push_back(MyString(""));
     _insertNewLine(tmp);
 }
 
