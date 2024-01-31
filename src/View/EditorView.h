@@ -38,8 +38,10 @@ public:
     void moveCursorUp(bool isContent);
     void moveCursorDown(bool isContent);
 
+    void moveCursorStartSubLine(bool isContent);
     void moveCursorStartLine(bool isContent);
     void moveCursorEndLine(bool isContent);
+    void moveCursorEndSubLine(bool isContent);
     void moveCursorBegWord(bool isContent);
     void moveCursorEndWord(bool isContent);
     void moveCursorLineNumber(int lineNumber);

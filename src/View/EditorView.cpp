@@ -220,7 +220,7 @@ void EditorView::moveCursorEndWord(bool isContent)
     ncurses.setCursor(getContentWindowId(), &newCords.y, &newCords.x);
 }
 
-void EditorView::moveCursorStartLine(bool isContent)
+void EditorView::moveCursorStartSubLine(bool isContent)
 {
     if (isContent)
     {
@@ -232,11 +232,40 @@ void EditorView::moveCursorStartLine(bool isContent)
     }
 }
 
-void EditorView::moveCursorEndLine(bool isContent)
+void EditorView::moveCursorStartLine(bool isContent)
+{
+    if (isContent)
+    {
+        _contentWindowCords.x = 0;
+        _contentWindowCords.y -= _currentSubtextLine;
+        _currentSubtextLine = 0;
+        ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    }
+    else
+    {
+    }
+}
+
+void EditorView::moveCursorEndSubLine(bool isContent)
 {
     if (isContent)
     {
         _contentWindowCords.x = (*_editorApp.returnLine(_currentTextLine))[_currentSubtextLine].length();
+        ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+    }
+    else
+    {
+    }
+}
+
+
+void EditorView::moveCursorEndLine(bool isContent)
+{
+    if (isContent)
+    {
+        _contentWindowCords.x = (*_editorApp.returnLine(_currentTextLine))[_editorApp.returnLine(_currentTextLine)->size() - 1].length();
+        _contentWindowCords.y += _editorApp.returnLine(_currentTextLine)->size() - _currentSubtextLine - 1;
+        _currentSubtextLine = _editorApp.returnLine(_currentTextLine)->size() - 1;
         ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
     }
     else
