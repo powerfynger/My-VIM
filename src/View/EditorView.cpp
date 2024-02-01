@@ -4,9 +4,11 @@ EditorView::EditorView(EditorApp &buffer) : _editorApp(buffer)
 {
     ncurses.getSize(&_screenSizeX, &_screenSizeY);
     _contentWindowId = ncurses.addWindow(0, 0, _screenSizeY - 1, _screenSizeX, 0);
-    _commandWindowId = ncurses.addWindow(_screenSizeY - 1, 0, 1, _screenSizeX, 1);
+    _commandWindowId = ncurses.addWindow(_screenSizeY - 1, 0, 1, _screenSizeX, 0);
     _contentWindowCords.x = 0;
     _contentWindowCords.y = 0;
+    _commandWindowCords.x = 0;
+    _commandWindowCords.y = 0;
     _currentTextLine = 0;
     _currentSubtextLine = 0;
 }
@@ -40,9 +42,15 @@ int EditorView::getCurrentSubTextLine()
 {
     return _currentSubtextLine;
 }
+
 unsigned int EditorView::getContentCurrentLineX()
 {
     return _contentWindowCords.x;
+}
+
+unsigned int EditorView::getCommandCurrentLineX()
+{
+    return _commandWindowCords.x;
 }
 
 void EditorView::updateContentLine(int changedNumbersOfLine)
@@ -113,6 +121,11 @@ void EditorView::updateContentLine(int changedNumbersOfLine)
         ncurses.refreshWindow(getContentWindowId());
 }
 
+void EditorView::updateCommandLine()
+{
+    ncurses.writeToCurrentLine(_commandWindowId, _editorApp.returnCommand());
+}
+
 void EditorView::displayAllText()
 {
     ncurses.clearWindow(_contentWindowId);
@@ -136,6 +149,17 @@ void EditorView::displayAllText()
     _contentWindowCords.y = 0;
     _contentWindowCords.x = 0;
     ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
+}
+
+void EditorView::displayAllCommand()
+{
+    ncurses.clearWindow(_commandWindowId);
+
+    ncurses.writeAppendWindow(_commandWindowId, _editorApp.returnCommand());
+    ncurses.refreshWindow(_commandWindowId);
+    _contentWindowCords.y = 0;
+    _contentWindowCords.x = 0;
+    ncurses.setCursor(_commandWindowId, &_contentWindowCords.y, &_contentWindowCords.x);
 }
 
 void EditorView::moveCursorBegWord(bool isContent)
@@ -243,6 +267,10 @@ void EditorView::moveCursorStartLine(bool isContent)
     }
     else
     {
+        _commandWindowCords.x = 0;
+        _commandWindowCords.y = 0;
+        ncurses.setCursor(_commandWindowId, &_commandWindowCords.y, &_commandWindowCords.x);
+
     }
 }
 
@@ -334,6 +362,11 @@ void EditorView::moveCursorRight(bool isContent)
     else
     {
         _commandWindowCords.x += 1;
+        if (_commandWindowCords.x > _editorApp.returnCommand().length())
+        {
+            _commandWindowCords.x -= 1;
+        }
+
         ncurses.setCursor(getCmdWindowId(), &_commandWindowCords.y, &_commandWindowCords.x);
     }
 }

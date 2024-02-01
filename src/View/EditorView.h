@@ -20,6 +20,8 @@ public:
     unsigned int getContentWindowId();
     
     unsigned int getContentCurrentLineX();
+    unsigned int getCommandCurrentLineX();
+
 
     int getCurrentTextLine();
     int getCurrentSubTextLine();
@@ -31,7 +33,9 @@ public:
     // void setCurrentSubTextLine(int);
 
     void updateContentLine(int changedNumbersOfLine);
+    void updateCommandLine();
     void displayAllText();
+    void displayAllCommand();
 
     void moveCursorRight(bool isContent);
     void moveCursorLeft(bool isContent);

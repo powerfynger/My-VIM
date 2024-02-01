@@ -56,6 +56,11 @@ std::vector<MyString> *EditorApp::returnLine(unsigned int lineIndex)
     return &_text[lineIndex];
 }
 
+MyString EditorApp::returnCommand()
+{
+    return _commandBuffer;
+}
+
 bool EditorApp::_isWhitespace(char c)
 {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
@@ -211,6 +216,13 @@ int EditorApp::_insertCharToText(unsigned int lineNumber, unsigned int subLineNu
     _text[lineNumber][subLineNumber].insert(charIndex, 1, c);
     return rebalanceLine(lineNumber);
 }
+
+int EditorApp::_insertCharToCommand(int c, unsigned int charIndex)
+{
+    _commandBuffer.insert(charIndex, 1, c);
+    return 0;
+}
+
 // 1234 68901 121314
 void EditorApp::deleteCharAfterCursor()
 {
@@ -294,15 +306,24 @@ void EditorApp::copyCurrentWordToBuffer()
     _userBuffer.push_back(tmp);
 }
 
-void EditorApp::insertCharAfterCursor(int c)
+void EditorApp::insertCharAfterCursor(int c, bool isContent)
 {
-    _editorView->updateContentLine(_insertCharToText(
-        _editorView->getCurrentTextLine(), 
-        _editorView->getCurrentSubTextLine(), 
-        c, 
-        _editorView->getContentCurrentLineX()
-    ));
-    _editorView->moveCursorRight(true);
+    if (isContent)
+    {
+        _editorView->updateContentLine(_insertCharToText(
+            _editorView->getCurrentTextLine(), 
+            _editorView->getCurrentSubTextLine(), 
+            c, 
+            _editorView->getContentCurrentLineX()
+        ));
+        _editorView->moveCursorRight(true);
+    }
+    else
+    {
+        _insertCharToCommand(c, _editorView->getCommandCurrentLineX());
+        _editorView->updateCommandLine();
+        _editorView->moveCursorRight(false);
+    }
 }
 
 void EditorApp::insertEmptyLine()
@@ -312,6 +333,20 @@ void EditorApp::insertEmptyLine()
     _insertNewLine(tmp);
 }
 
+void EditorApp::processCommand()
+{
+    if (_commandBuffer.length() == 0) return;
+    if (!my_strcmp(_commandBuffer.data(), "q!"))
+    {
+        processExit();
+    }
+}
+
+void EditorApp::processExit()
+{
+    _editorView->ncurses.endNcurses();
+    exit(EXIT_SUCCESS);
+}
 
 EditorApp::~EditorApp()
 {

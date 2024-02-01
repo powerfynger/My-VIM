@@ -17,7 +17,8 @@ void EditorController::_setMode(EditorMode mode)
 {
     _mode = mode;
     if (mode == EditorMode::Navigation) _view.displayStatusNavigation();
-    if (mode == EditorMode::Write) _view.displayStatusWrite();
+    else if (mode == EditorMode::Write) _view.displayStatusWrite();
+    // else _view.clearWindow()
 }
 
 void EditorController::handleInput()
@@ -135,15 +136,13 @@ void EditorController::handleNavigationInput()
         _app.deleteCharAfterCursor();
         handleWriteInput();
         break;
-    case '/':
+    case ':':
         _setMode(EditorMode::Command);
+        _view.displayAllCommand();
+        _view.moveCursorStartLine(false);
         break;
     case '?':
         /* code */
-        break;
-    case 'c':
-        _view.ncurses.endNcurses();
-        exit(EXIT_SUCCESS);
         break;
     default:
         // Needed by the command go to line number; Probably need to change all number of line types to unsigned long long
@@ -176,7 +175,7 @@ void EditorController::handleWriteInput()
         _setMode(EditorMode::Navigation);
         return;
     default:
-        _app.insertCharAfterCursor(c);
+        _app.insertCharAfterCursor(c, true);
         break;
     }
 
@@ -202,8 +201,11 @@ void EditorController::handleCommandInput()
     case 27:
         _setMode(EditorMode::Navigation);
         return;
+    case 13:
+        _app.processCommand();
+        break;
     default:
-        _app.insertCharAfterCursor(c);
+        _app.insertCharAfterCursor(c, false);
         break;
     }
 

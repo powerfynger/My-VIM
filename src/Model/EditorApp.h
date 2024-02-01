@@ -17,6 +17,7 @@ public:
     void readToBuffer(unsigned int maxLineLen);
     int vectorOfIntsToInt(const std::vector<int>& vector);
     std::vector<std::vector<MyString>>* returnText();
+    MyString returnCommand();
     std::vector<MyString>* returnLine(unsigned int lineIndex);
 
     int findStartOfWordL(MyString& line, int startIndex);
@@ -25,7 +26,7 @@ public:
     int rebalanceLine(int lineNumber);
     
     void deleteCharAfterCursor();
-    void insertCharAfterCursor(int);
+    void insertCharAfterCursor(int, bool isContent);
     void insertEmptyLine();
     void deleteWordAfterCursor();
 
@@ -38,6 +39,8 @@ public:
 
     void addView(EditorView* view);
 
+    void processCommand();
+    void processExit();
     unsigned int getTextLinesNumbers();
     int getTextToDisplayLinesNumber();
     ~EditorApp();
@@ -56,6 +59,7 @@ private:
     bool _isWhitespace(char c);
     int _deleteChar(unsigned int lineNumber, unsigned int subLineNumber, unsigned int charIndex);
     int _insertCharToText(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex);
+    int _insertCharToCommand(int c, unsigned int charIndex);
     void _insertNewLine(std::vector<MyString> line);
     void _deleteLine(int lineNumber);
 
