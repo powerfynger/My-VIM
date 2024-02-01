@@ -7,6 +7,8 @@
 #include <fstream>
 #include <vector>
 #include <limits>
+#include <sstream>
+
 
 class EditorView;
 
@@ -18,6 +20,7 @@ public:
     int vectorOfIntsToInt(const std::vector<int>& vector);
     std::vector<std::vector<MyString>>* returnText();
     MyString returnCommand();
+    void clearCommand();
     std::vector<MyString>* returnLine(unsigned int lineIndex);
 
     int findStartOfWordL(MyString& line, int startIndex);
@@ -25,7 +28,8 @@ public:
 
     int rebalanceLine(int lineNumber);
     
-    void deleteCharAfterCursor();
+    void deleteCharAfterCursor(bool isContent);
+    void deleteCharBeforeCursor(bool isContent);
     void insertCharAfterCursor(int, bool isContent);
     void insertEmptyLine();
     void deleteWordAfterCursor();
@@ -35,12 +39,17 @@ public:
     void pasteUserBuffer();
     void deleteCurrentLine();
 
+    void openFile(MyString fileName);
     void writeText(std::fstream& file);
 
     void addView(EditorView* view);
 
     void processCommand();
+    void processCommandOpenFile();
+
     void processExit();
+    void forceExit();
+    
     unsigned int getTextLinesNumbers();
     int getTextToDisplayLinesNumber();
     ~EditorApp();
@@ -54,14 +63,20 @@ private:
     std::vector<MyString> _userBuffer;
     MyString _commandBuffer;
     std::fstream _fileDescr;
-    
+
     void _readText(std::fstream& file);
     bool _isWhitespace(char c);
-    int _deleteChar(unsigned int lineNumber, unsigned int subLineNumber, unsigned int charIndex);
+    int _deleteChar(unsigned int lineNumber, unsigned int subLineNumber, unsigned int charIndex, bool isContent);
     int _insertCharToText(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex);
     int _insertCharToCommand(int c, unsigned int charIndex);
     void _insertNewLine(std::vector<MyString> line);
     void _deleteLine(int lineNumber);
+
+    bool _isFileExist(MyString& flineName);
+    bool _isNumeric(MyString& line);
+    bool _stringToNumber(MyString& line, int& result);
+
+
 
 };
 

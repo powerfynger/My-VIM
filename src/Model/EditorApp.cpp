@@ -61,6 +61,12 @@ MyString EditorApp::returnCommand()
     return _commandBuffer;
 }
 
+void EditorApp::clearCommand()
+{
+    _commandBuffer.clear();
+}
+
+
 bool EditorApp::_isWhitespace(char c)
 {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
@@ -204,11 +210,18 @@ int EditorApp::rebalanceLine(int lineNumber)
 
 // unsigned int EditorApp::getRealLinesNumbers
 
-int EditorApp::_deleteChar(unsigned int lineNumber, unsigned int subLineNumber, unsigned int charIndex)
+int EditorApp::_deleteChar(unsigned int lineNumber, unsigned int subLineNumber, unsigned int charIndex, bool isContent)
 {
-    MyString* aa = &_text[lineNumber][subLineNumber];
-    _text[lineNumber][subLineNumber].erase(charIndex, 1);
-    return rebalanceLine(lineNumber);
+    if(isContent)
+    {
+        _text[lineNumber][subLineNumber].erase(charIndex, 1);
+        return rebalanceLine(lineNumber);
+    }
+    else
+    {
+        _commandBuffer.erase(charIndex, 1);
+        return 0;
+    }
 }
 
 int EditorApp::_insertCharToText(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex)
@@ -224,10 +237,40 @@ int EditorApp::_insertCharToCommand(int c, unsigned int charIndex)
 }
 
 // 1234 68901 121314
-void EditorApp::deleteCharAfterCursor()
+void EditorApp::deleteCharAfterCursor(bool isContent)
 {
-    
-    _editorView->updateContentLine(_deleteChar(_editorView->getCurrentTextLine(), _editorView->getCurrentSubTextLine(), _editorView->getContentCurrentLineX()));
+
+    if(isContent){
+        _editorView->updateContentLine(_deleteChar(
+            _editorView->getCurrentTextLine(), 
+            _editorView->getCurrentSubTextLine(), 
+            _editorView->getContentCurrentLineX(),
+            isContent
+        ));
+    }
+    else
+    {
+        
+    }
+}
+void EditorApp::deleteCharBeforeCursor(bool isContent)
+{
+
+    if(isContent){
+        _editorView->updateContentLine(_deleteChar(
+            _editorView->getCurrentTextLine(), 
+            _editorView->getCurrentSubTextLine(), 
+            _editorView->getContentCurrentLineX() - 1,
+            true
+        ));
+    }
+    else
+    {
+        _deleteChar(0, 0, _editorView->getCommandCurrentLineX() - 1, false);
+        _editorView->updateCommandLine();
+
+        
+    }
 }
 
 void EditorApp::deleteWordAfterCursor()
@@ -238,7 +281,7 @@ void EditorApp::deleteWordAfterCursor()
     int i = 0, _oldCurrentLine = _textToDisplayLinesNumber, _oldCurrentSubLine = _editorView->getCurrentSubTextLine();
     for (i = begWordIndex; i < textLine.size() && textLine[i] != ' '; i++)
     {
-        _deleteChar(_editorView->getCurrentTextLine(), _editorView->getCurrentSubTextLine(), begWordIndex);
+        _deleteChar(_editorView->getCurrentTextLine(), _editorView->getCurrentSubTextLine(), begWordIndex, true);
 
     }
     if (_oldCurrentLine != _textToDisplayLinesNumber)
@@ -248,7 +291,7 @@ void EditorApp::deleteWordAfterCursor()
     }
 
 
-    if (begWordIndex < textLine.size()) _deleteChar(_editorView->getCurrentTextLine(), _editorView->getCurrentSubTextLine(), begWordIndex);
+    if (begWordIndex < textLine.size()) _deleteChar(_editorView->getCurrentTextLine(), _editorView->getCurrentSubTextLine(), begWordIndex, true);
     _editorView->updateContentLine(0);
 
 
@@ -336,16 +379,82 @@ void EditorApp::insertEmptyLine()
 void EditorApp::processCommand()
 {
     if (_commandBuffer.length() == 0) return;
-    if (!my_strcmp(_commandBuffer.data(), "q!"))
+    if (_commandBuffer[0] == 'o')
     {
-        processExit();
+        processCommandOpenFile();
     }
+    else if (!my_strcmp(_commandBuffer.data(), "q!"))
+    {
+        forceExit();
+    }
+    // else if(true)
+    // {
+
+    // }
+    else
+    {
+        int tmp;
+        if (_isNumeric(_commandBuffer))
+        {
+            if (_stringToNumber(_commandBuffer, tmp))
+            {
+                if (tmp < _textLinesNumber)
+                {
+                    _editorView->moveCursorLineNumber(tmp);
+                    _editorView->ncurses.refreshWindow(_editorView->getContentWindowId());
+                }
+            }
+        }
+    }
+    clearCommand();
+    _editorView->displayAllCommand();
 }
 
-void EditorApp::processExit()
+void EditorApp::processCommandOpenFile()
+{
+    MyString fileName(_commandBuffer.substr(2));
+
+    if(_isFileExist(fileName)) openFile(fileName);
+}
+
+void EditorApp::forceExit()
 {
     _editorView->ncurses.endNcurses();
     exit(EXIT_SUCCESS);
+}
+
+void EditorApp::openFile(MyString fileName)
+{
+    _text.clear();
+    _fileDescr.close();
+
+    _fileDescr.open(fileName.c_str());
+    readToBuffer(_editorView->getScrSizeX() - 2);
+    _editorView->reloadView();
+    _editorView->displayAllText();
+
+}
+
+bool EditorApp::_isFileExist (MyString& flineName) {
+    if (FILE *file = fopen(flineName.data(), "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }   
+}
+
+bool EditorApp::_isNumeric(MyString& line) {
+    std::istringstream iss(line.c_str());
+    double dummy;
+    iss >> std::noskipws >> dummy;
+    return iss.eof() && !iss.fail();
+}
+
+bool EditorApp::_stringToNumber(MyString& line, int& result) {
+    std::istringstream iss(line.c_str());
+    iss >> std::noskipws >> result;
+    return !iss.fail() && iss.eof();
 }
 
 EditorApp::~EditorApp()

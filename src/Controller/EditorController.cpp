@@ -100,7 +100,7 @@ void EditorController::handleNavigationInput()
         _view.moveCursorPageDown();
         break;
     case 'x':
-        _app.deleteCharAfterCursor();
+        _app.deleteCharAfterCursor(true);
         break;
     case 'y':
         _app.copyCurrentLineToBuffer();
@@ -133,7 +133,7 @@ void EditorController::handleNavigationInput()
         _setMode(EditorMode::Write);
         break;
     case 'r':
-        _app.deleteCharAfterCursor();
+        _app.deleteCharAfterCursor(true);
         handleWriteInput();
         break;
     case ':':
@@ -170,6 +170,10 @@ void EditorController::handleWriteInput()
     case KEY_RIGHT:
         _view.moveCursorRight(true);
         break;
+    case KEY_BACKSPACE:
+        _app.deleteCharBeforeCursor(true);
+        _view.moveCursorLeft(true);
+        break;
     // ESQ     
     case 27:
         _setMode(EditorMode::Navigation);
@@ -200,9 +204,15 @@ void EditorController::handleCommandInput()
     // ESQ     
     case 27:
         _setMode(EditorMode::Navigation);
+        _view.updateContentLine(0);
+        _app.clearCommand();
         return;
     case 13:
         _app.processCommand();
+        break;
+    case KEY_BACKSPACE:
+        _app.deleteCharBeforeCursor(false);
+        _view.moveCursorLeft(false);
         break;
     default:
         _app.insertCharAfterCursor(c, false);

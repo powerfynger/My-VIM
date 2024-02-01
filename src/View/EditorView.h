@@ -58,6 +58,7 @@ public:
     void displayStatusNavigation();
     void displayStatusWrite();
 
+    void reloadView();
 
     void endView();
 

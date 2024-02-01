@@ -102,7 +102,7 @@ void NcursesWrapper::writeAppendWindow(unsigned int windowId, MyString str){
     }
     else
     {
-        wmove(cur_window, cords.y + 1, 0);
+        wmove(cur_window, cords.y, 0);
     }
     wprintw(cur_window, "%s", str.c_str());
     // wmove(cur_window, cords.y + 1, 0);
@@ -151,7 +151,7 @@ void NcursesWrapper::clearWindowDown(unsigned int windowId)
 
 ScrollingCode NcursesWrapper::setCursor(int windowId, int* y, int* x)
 {
-    WindowCords maxCords, currentCords;
+    WindowCords maxCords;
     WINDOW *cur_window = _windows[windowId];
     getmaxyx(cur_window, maxCords.y, maxCords.x);
 

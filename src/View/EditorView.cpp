@@ -134,17 +134,23 @@ void EditorView::displayAllText()
     {
         for (const auto line : lineBuffer)
         {
-            ncurses.writeAppendWindow(getContentWindowId(), line);
-            ncurses.refreshWindow(getContentWindowId());
+            // ncurses.writeAppendWindow(getContentWindowId(), line);
+            ncurses.writeToCurrentLine(_contentWindowId, line);
+            ncurses.refreshWindow(_contentWindowId);
             _contentWindowCords.y += 1;
-            if (_contentWindowCords.y + 1 >= _screenSizeY)
+            if (_contentWindowCords.y >= _screenSizeY - 1)
             {
                 f = false;
+                 _contentWindowCords.y--;
                 break;
             }
+            ncurses.setCursor(_contentWindowId, &_contentWindowCords.y, &_contentWindowCords.x);
         }
         if (!f)
+        {
             break;
+            
+        }
     }
     _contentWindowCords.y = 0;
     _contentWindowCords.x = 0;
@@ -157,8 +163,8 @@ void EditorView::displayAllCommand()
 
     ncurses.writeAppendWindow(_commandWindowId, _editorApp.returnCommand());
     ncurses.refreshWindow(_commandWindowId);
-    _contentWindowCords.y = 0;
-    _contentWindowCords.x = 0;
+    _commandWindowCords.y = 0;
+    _commandWindowCords.x = 0;
     ncurses.setCursor(_commandWindowId, &_contentWindowCords.y, &_contentWindowCords.x);
 }
 
@@ -170,7 +176,7 @@ void EditorView::moveCursorBegWord(bool isContent)
     newCords.y = _contentWindowCords.y;
     newCords.x = _editorApp.findStartOfWordL(textLine, _contentWindowCords.x);
 
-    if (newCords.x < 0)
+    if (newCords.x == 0 && _contentWindowCords.x == 0)
     {
         if (_currentTextLine == 0)
             return;
@@ -200,7 +206,7 @@ void EditorView::moveCursorBegWord(bool isContent)
     }
 
     _contentWindowCords = newCords;
-    ncurses.setCursor(getContentWindowId(), &newCords.y, &newCords.x);
+    ncurses.setCursor(_contentWindowId, &newCords.y, &newCords.x);
 }
 
 void EditorView::moveCursorEndWord(bool isContent)
@@ -285,7 +291,6 @@ void EditorView::moveCursorEndSubLine(bool isContent)
     {
     }
 }
-
 
 void EditorView::moveCursorEndLine(bool isContent)
 {
@@ -495,6 +500,7 @@ bool EditorView::_handleScrollDown()
         _currentTextLine += 1;
         textLine = (*_editorApp.returnLine(_currentTextLine));
     }
+    
     ncurses.writeAppendWindow(getContentWindowId(), textLine[_currentSubtextLine]);
     ncurses.refreshWindow(getContentWindowId());
     return false;
@@ -543,4 +549,14 @@ void EditorView::displayStatusWrite()
     ncurses.clearWindow(_commandWindowId);
     ncurses.writeWindow(_commandWindowId, MyString("--WRITE--"));
     ncurses.refreshWindow(_commandWindowId);
+}
+
+void EditorView::reloadView()
+{
+    _contentWindowCords.x = 0;
+    _contentWindowCords.y = 0;
+    _commandWindowCords.x = 0;
+    _commandWindowCords.y = 0;
+    _currentTextLine = 0;
+    _currentSubtextLine = 0;
 }
