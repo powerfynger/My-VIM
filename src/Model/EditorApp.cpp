@@ -108,7 +108,8 @@ int EditorApp::findStartOfWordR(MyString &line, int startIndex)
 
 EditorApp::EditorApp(MyString &fileName)
 {
-    _fileDescr.open(fileName.c_str());
+    _currFileName = fileName;
+    _fileDescr.open(fileName.c_str(), std::ios::out|std::ios::in);
 }
 
 void EditorApp::addView(EditorView* view)
@@ -383,14 +384,20 @@ void EditorApp::processCommand()
     {
         processCommandOpenFile();
     }
-    else if (!my_strcmp(_commandBuffer.data(), "q!"))
+    else if (!my_strcmp(_commandBuffer.c_str(), "q!") || !my_strcmp(_commandBuffer.c_str(), "q"))
     {
         forceExit();
     }
-    // else if(true)
-    // {
+    else if(_commandBuffer[0] == 'w')
+    {
+        processCommandSaveToFile();
 
-    // }
+    }
+    else if (!my_strcmp(_commandBuffer.c_str(), "x") || !my_strcmp(_commandBuffer.c_str(), "wq!"))
+    {
+        _writeText(_currFileName);
+        forceExit();
+    }
     else
     {
         int tmp;
@@ -410,20 +417,37 @@ void EditorApp::processCommand()
     _editorView->displayAllCommand();
 }
 
+void EditorApp::processCommandSaveToFile()
+{
+    MyString fileName(_commandBuffer.substr(2, _commandBuffer.length() - 2));
+    if (fileName.length() != 0)
+    {
+        std::fstream tmp;
+        tmp.open(fileName.c_str());
+        _writeText(fileName);
+    }
+    else
+    {
+        _writeText(_currFileName);
+    }
+}
+
+
 void EditorApp::processCommandOpenFile()
 {
     MyString fileName(_commandBuffer.substr(2));
 
-    if(_isFileExist(fileName)) openFile(fileName);
+    if(_isFileExist(fileName)) readFromFile(fileName);
 }
 
 void EditorApp::forceExit()
 {
     _editorView->ncurses.endNcurses();
+    _fileDescr.close();
     exit(EXIT_SUCCESS);
 }
 
-void EditorApp::openFile(MyString fileName)
+void EditorApp::readFromFile(MyString fileName)
 {
     _text.clear();
     _fileDescr.close();
@@ -455,6 +479,27 @@ bool EditorApp::_stringToNumber(MyString& line, int& result) {
     std::istringstream iss(line.c_str());
     iss >> std::noskipws >> result;
     return !iss.fail() && iss.eof();
+}
+
+void EditorApp::_writeText(MyString fileName)
+{   
+    _test = fopen(fileName.c_str(), "w");
+    for (const auto lineBuffer : _text)
+    {
+        for (auto line : lineBuffer)
+        {
+            // file.write(line.c_str(), line.length());
+            fprintf(_test, "%s", line.c_str());
+            // file << line.c_str();
+
+        }
+        // file << "\n";
+        fprintf(_test, "\n");
+    }
+    // file.flush();
+
+    fclose(_test);
+
 }
 
 EditorApp::~EditorApp()

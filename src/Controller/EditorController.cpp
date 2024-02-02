@@ -17,7 +17,11 @@ void EditorController::_setMode(EditorMode mode)
 {
     _mode = mode;
     if (mode == EditorMode::Navigation) _view.displayStatusNavigation();
-    else if (mode == EditorMode::Write) _view.displayStatusWrite();
+    else if (mode == EditorMode::Write){
+        _view.displayStatusWrite();
+        _view.updateContentLine(0);
+    }
+
     // else _view.clearWindow()
 }
 
@@ -177,6 +181,8 @@ void EditorController::handleWriteInput()
     // ESQ     
     case 27:
         _setMode(EditorMode::Navigation);
+        _view.updateContentLine(0);
+
         return;
     default:
         _app.insertCharAfterCursor(c, true);

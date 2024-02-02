@@ -39,13 +39,13 @@ public:
     void pasteUserBuffer();
     void deleteCurrentLine();
 
-    void openFile(MyString fileName);
-    void writeText(std::fstream& file);
+    void readFromFile(MyString fileName);
 
     void addView(EditorView* view);
 
     void processCommand();
     void processCommandOpenFile();
+    void processCommandSaveToFile();
 
     void processExit();
     void forceExit();
@@ -62,7 +62,9 @@ private:
     std::vector<std::vector<MyString>> _text;
     std::vector<MyString> _userBuffer;
     MyString _commandBuffer;
+    FILE* _test;
     std::fstream _fileDescr;
+    MyString _currFileName;
 
     void _readText(std::fstream& file);
     bool _isWhitespace(char c);
@@ -71,6 +73,7 @@ private:
     int _insertCharToCommand(int c, unsigned int charIndex);
     void _insertNewLine(std::vector<MyString> line);
     void _deleteLine(int lineNumber);
+    void _writeText(MyString fileName);
 
     bool _isFileExist(MyString& flineName);
     bool _isNumeric(MyString& line);

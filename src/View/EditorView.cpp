@@ -165,7 +165,7 @@ void EditorView::displayAllCommand()
     ncurses.refreshWindow(_commandWindowId);
     _commandWindowCords.y = 0;
     _commandWindowCords.x = 0;
-    ncurses.setCursor(_commandWindowId, &_contentWindowCords.y, &_contentWindowCords.x);
+    ncurses.setCursor(_commandWindowId, &_commandWindowCords.y, &_commandWindowCords.x);
 }
 
 void EditorView::moveCursorBegWord(bool isContent)
