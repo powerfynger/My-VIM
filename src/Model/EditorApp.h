@@ -18,8 +18,8 @@ public:
     explicit EditorApp(MyString &fileName);
     void readToBuffer(unsigned int maxLineLen);
     int vectorOfIntsToInt(const std::vector<int>& vector);
-    std::vector<std::vector<MyString>>* returnText();
-    MyString returnCommand();
+    std::vector<std::vector<MyString>>* getText();
+    MyString getCommand();
     void clearCommand();
     std::vector<MyString>* returnLine(unsigned int lineIndex);
 
@@ -43,9 +43,12 @@ public:
 
     void addView(EditorView* view);
 
+    void processCommandInput();
     void processCommand();
     void processCommandOpenFile();
     void processCommandSaveToFile();
+    void processSearch(bool isReverse);
+
 
     void processExit();
     void forceExit();
@@ -74,6 +77,7 @@ private:
     void _insertNewLine(std::vector<MyString> line);
     void _deleteLine(int lineNumber);
     void _writeText(MyString fileName);
+    bool _findText(MyString userText, unsigned int *textLine, unsigned int *textSubLine, bool isReverse);
 
     bool _isFileExist(MyString& flineName);
     bool _isNumeric(MyString& line);

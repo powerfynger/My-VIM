@@ -123,14 +123,15 @@ void EditorView::updateContentLine(int changedNumbersOfLine)
 
 void EditorView::updateCommandLine()
 {
-    ncurses.writeToCurrentLine(_commandWindowId, _editorApp.returnCommand());
+    ncurses.writeToCurrentLine(_commandWindowId, _editorApp.getCommand());
+    ncurses.refreshWindow(_commandWindowId);
 }
 
 void EditorView::displayAllText()
 {
     ncurses.clearWindow(_contentWindowId);
     bool f = true;
-    for (const auto lineBuffer : *_editorApp.returnText())
+    for (const auto lineBuffer : *_editorApp.getText())
     {
         for (const auto line : lineBuffer)
         {
@@ -160,8 +161,8 @@ void EditorView::displayAllText()
 void EditorView::displayAllCommand()
 {
     ncurses.clearWindow(_commandWindowId);
-
-    ncurses.writeAppendWindow(_commandWindowId, _editorApp.returnCommand());
+    
+    ncurses.writeAppendWindow(_commandWindowId, _editorApp.getCommand());
     ncurses.refreshWindow(_commandWindowId);
     _commandWindowCords.y = 0;
     _commandWindowCords.x = 0;
@@ -367,7 +368,7 @@ void EditorView::moveCursorRight(bool isContent)
     else
     {
         _commandWindowCords.x += 1;
-        if (_commandWindowCords.x > _editorApp.returnCommand().length())
+        if (_commandWindowCords.x > _editorApp.getCommand().length())
         {
             _commandWindowCords.x -= 1;
         }

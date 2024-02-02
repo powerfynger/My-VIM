@@ -140,13 +140,32 @@ void EditorController::handleNavigationInput()
         _app.deleteCharAfterCursor(true);
         handleWriteInput();
         break;
+    case 'n':
+        if (_app.getCommand().empty()) break;
+        _app.processSearch(false);
+
+        break;
+    case 'N':
+        if (_app.getCommand().empty()) break;
+        _app.processSearch(true);
+        break;
     case ':':
-        _setMode(EditorMode::Command);
+        _app.clearCommand();
         _view.displayAllCommand();
-        _view.moveCursorStartLine(false);
+        _setMode(EditorMode::Command);
+        _app.insertCharAfterCursor(':', false);
         break;
     case '?':
-        /* code */
+        _app.insertCharAfterCursor('?', false);
+        _setMode(EditorMode::Command);
+        break;
+    case '/':
+        _app.insertCharAfterCursor('/', false);
+        _setMode(EditorMode::Command);
+        break;
+    case 27:
+        _setMode(EditorMode::Navigation);
+        _view.updateContentLine(0);
         break;
     default:
         // Needed by the command go to line number; Probably need to change all number of line types to unsigned long long
@@ -194,6 +213,8 @@ void EditorController::handleWriteInput()
 
 void EditorController::handleFindInput()
 {
+    handleNavigationInput();
+
 }
 
 void EditorController::handleCommandInput()
@@ -210,11 +231,14 @@ void EditorController::handleCommandInput()
     // ESQ     
     case 27:
         _setMode(EditorMode::Navigation);
-        _view.updateContentLine(0);
         _app.clearCommand();
+        _view.updateContentLine(0);
         return;
     case 13:
-        _app.processCommand();
+        _app.processCommandInput();
+        // _view.displayAllCommand();
+        _setMode(EditorMode::Navigation);
+        _view.updateContentLine(0);
         break;
     case KEY_BACKSPACE:
         _app.deleteCharBeforeCursor(false);

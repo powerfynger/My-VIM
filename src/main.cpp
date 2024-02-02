@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     {
         // MyString fileName(argv[1]);
         // MyString fileName("../src/main.cpp");
-        MyString fileName("aaa");
+        MyString fileName("aa");
         EditorApp app(fileName);
         EditorView view(app);
         app.addView(&view);

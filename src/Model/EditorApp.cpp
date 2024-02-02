@@ -44,7 +44,7 @@ int EditorApp::getTextToDisplayLinesNumber()
     return _textToDisplayLinesNumber;
 }
 
-std::vector<std::vector<MyString>> *EditorApp::returnText()
+std::vector<std::vector<MyString>> *EditorApp::getText()
 {
     return &_text;
 }
@@ -56,7 +56,7 @@ std::vector<MyString> *EditorApp::returnLine(unsigned int lineIndex)
     return &_text[lineIndex];
 }
 
-MyString EditorApp::returnCommand()
+MyString EditorApp::getCommand()
 {
     return _commandBuffer;
 }
@@ -377,14 +377,50 @@ void EditorApp::insertEmptyLine()
     _insertNewLine(tmp);
 }
 
+void EditorApp::processCommandInput()
+{
+    if (_commandBuffer.length() == 1) return;
+    switch (_commandBuffer[0])
+    {
+    case ':':
+        processCommand();
+        break;
+    case '?':
+        _commandBuffer.erase(0, 1);
+        processSearch(true);
+        break;
+    case '/':
+        _commandBuffer.erase(0, 1);
+        processSearch(false);
+        break;
+    default:
+        break;
+    }
+    
+}
+
+void EditorApp::processSearch(bool isReverse)
+{
+    unsigned int tmpTextLine, tmpSubTextLine;
+    if (_findText(_commandBuffer, &tmpTextLine, &tmpSubTextLine, isReverse))
+    {
+        _editorView->moveCursorLineNumber(tmpTextLine);
+        for (int i = 0; i < tmpSubTextLine; i++)
+        {
+            _editorView->moveCursorDown(true);
+        }
+    }
+}
+
 void EditorApp::processCommand()
 {
-    if (_commandBuffer.length() == 0) return;
+    _commandBuffer.erase(0, 1);
+
     if (_commandBuffer[0] == 'o')
     {
         processCommandOpenFile();
     }
-    else if (!my_strcmp(_commandBuffer.c_str(), "q!") || !my_strcmp(_commandBuffer.c_str(), "q"))
+    else if (!my_strcmp(_commandBuffer.c_str(), "q!") || !my_strcmp(_commandBuffer.c_str(), "q!"))
     {
         forceExit();
     }
@@ -413,8 +449,6 @@ void EditorApp::processCommand()
             }
         }
     }
-    clearCommand();
-    _editorView->displayAllCommand();
 }
 
 void EditorApp::processCommandSaveToFile()
@@ -467,6 +501,38 @@ bool EditorApp::_isFileExist (MyString& flineName) {
         return false;
     }   
 }
+
+bool EditorApp::_findText(MyString userText, unsigned int *textLine, unsigned int *textSubLine, bool isReverse)
+{
+    if (!isReverse)
+    {
+        for (int i = _editorView->getCurrentTextLine() + 1; i < _text.size(); i++)
+        {
+            for (int j = 0; j < _text[i].size(); j++)
+            {
+                if (_text[i][j].find(userText.c_str()) != -1)
+                {
+                    *textLine = i; *textSubLine = j; return true;
+                }
+            }
+        }
+    }
+    if (isReverse)
+    {
+        for (int i = _editorView->getCurrentTextLine() - 1; i >= 0; i--)
+        {
+            for (int j = _text[i].size() - 1; j >= 0; j--)
+            {
+                if (_text[i][j].find(userText.c_str()) != -1)
+                {
+                    *textLine = i; *textSubLine = j; return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
 
 bool EditorApp::_isNumeric(MyString& line) {
     std::istringstream iss(line.c_str());
