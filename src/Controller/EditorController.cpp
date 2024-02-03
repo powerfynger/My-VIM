@@ -156,10 +156,12 @@ void EditorController::handleNavigationInput()
         _app.insertCharAfterCursor(':', false);
         break;
     case '?':
+        // _app.clearCommand();
         _app.insertCharAfterCursor('?', false);
         _setMode(EditorMode::Command);
         break;
     case '/':
+        // _app.clearCommand();    
         _app.insertCharAfterCursor('/', false);
         _setMode(EditorMode::Command);
         break;

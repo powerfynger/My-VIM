@@ -10,9 +10,9 @@ int main(int argc, char **argv)
     argc = 2;
     if (argc > 1)
     {
-        // MyString fileName(argv[1]);
         // MyString fileName("../src/main.cpp");
         MyString fileName("aa");
+        // MyString fileName(argv[1]);
         EditorApp app(fileName);
         EditorView view(app);
         app.addView(&view);

@@ -446,6 +446,7 @@ void EditorView::moveCursorDown(bool isContent)
     ScrollingCode scrl;
     if (isContent)
     {
+        if (_editorApp.getTextLinesNumbers() <= _contentWindowCords.y + 1) return;
         _contentWindowCords.y += 1;
         scrl = ncurses.setCursor(getContentWindowId(), &_contentWindowCords.y, &_contentWindowCords.x);
         if (scrl == ScrollingCode::SCROLL_DOWN)
