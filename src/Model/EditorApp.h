@@ -31,6 +31,7 @@ public:
     void deleteCharAfterCursor(bool isContent);
     void deleteCharBeforeCursor(bool isContent);
     void insertCharAfterCursor(int, bool isContent);
+    void divideCurrentLineAfterCursor();
     void insertEmptyLine();
     void deleteWordAfterCursor();
 
@@ -74,7 +75,7 @@ private:
     int _deleteChar(unsigned int lineNumber, unsigned int subLineNumber, unsigned int charIndex, bool isContent);
     int _insertCharToText(unsigned int lineNumber, unsigned int subLineNumber, int c, unsigned int charIndex);
     int _insertCharToCommand(int c, unsigned int charIndex);
-    void _insertNewLine(std::vector<MyString> line);
+    void _insertNewLine(std::vector<MyString> line, unsigned int lineNumber);
     void _deleteLine(int lineNumber);
     void _writeText(MyString fileName);
     bool _findText(MyString userText, unsigned int *textLine, unsigned int *textSubLine, bool isReverse);

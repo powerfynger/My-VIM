@@ -307,14 +307,14 @@ void EditorApp::copyCurrentLineToBuffer()
 void EditorApp::pasteUserBuffer()
 {
     if (_userBuffer.size() == 0) return;
-    _insertNewLine(_userBuffer);
+    _insertNewLine(_userBuffer, _editorView->getCurrentTextLine());
 
 }
 
-void EditorApp::_insertNewLine(std::vector<MyString> line)
+void EditorApp::_insertNewLine(std::vector<MyString> line, unsigned int lineNumber)
 {   
     // _text[lineNumber][subLineNumber + 1].insert(0, 1, _text[lineNumber][subLineNumber].length() - 1);
-    _text.insert(_text.begin() + _editorView->getCurrentTextLine(), line);
+    _text.insert(_text.begin() + lineNumber, line);
     _textLinesNumber++;
     _textToDisplayLinesNumber += line.size();
     _editorView->updateContentLine(-1);
@@ -330,8 +330,28 @@ void EditorApp::_deleteLine(int lineNumber)
 
 }
 
+void EditorApp::divideCurrentLineAfterCursor()
+{
+    int tmpCurrentTextLine = _editorView->getCurrentTextLine();
+    int tmpCurrentSubTextLine = _editorView->getCurrentSubTextLine();
+    int tmpCurrentIndex = _editorView->getContentCurrentLineX();
+    
+    MyString tmpString = _text[tmpCurrentTextLine][tmpCurrentSubTextLine].substr(tmpCurrentIndex);
+    _text[tmpCurrentTextLine][tmpCurrentSubTextLine].erase(tmpCurrentIndex, _text[tmpCurrentTextLine][tmpCurrentSubTextLine].length() - tmpCurrentIndex);
+
+    std::vector<MyString> tmpVector(_text[tmpCurrentTextLine].begin() + tmpCurrentSubTextLine, _text[tmpCurrentTextLine].end());
+    if (tmpCurrentSubTextLine == 0) tmpCurrentSubTextLine++;
+    _text[tmpCurrentTextLine].erase(_text[tmpCurrentTextLine].begin() + tmpCurrentSubTextLine, _text[tmpCurrentTextLine].end());
+
+    tmpVector[0] = tmpString;
+    _insertNewLine(tmpVector, tmpCurrentTextLine + 1);
+
+
+}
+
 void EditorApp::deleteCurrentLine()
 {
+    if (_textLinesNumber <= 0) return;
     _deleteLine(_editorView->getCurrentTextLine());
 }
 
@@ -374,7 +394,7 @@ void EditorApp::insertEmptyLine()
 {
     std::vector<MyString> tmp;
     tmp.push_back(MyString(""));
-    _insertNewLine(tmp);
+    _insertNewLine(tmp, _editorView->getCurrentTextLine());
 }
 
 void EditorApp::processCommandInput()

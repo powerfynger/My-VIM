@@ -197,6 +197,11 @@ void EditorController::handleWriteInput()
         _app.deleteCharBeforeCursor(true);
         _view.moveCursorLeft(true);
         break;
+    case 13:
+        // _app.insertEmptyLine();
+        _app.divideCurrentLineAfterCursor();
+        _view.updateContentLine(-1);
+        break;
     // ESQ     
     case 27:
         _setMode(EditorMode::Navigation);
