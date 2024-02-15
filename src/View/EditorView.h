@@ -19,8 +19,8 @@ public:
     unsigned int getCmdWindowId();
     unsigned int getContentWindowId();
     
-    unsigned int getContentCurrentLineX();
-    unsigned int getCommandCurrentLineX();
+    int getContentCurrentLineX();
+    int getCommandCurrentLineX();
 
 
     int getCurrentTextLine();

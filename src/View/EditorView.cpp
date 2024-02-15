@@ -43,12 +43,12 @@ int EditorView::getCurrentSubTextLine()
     return _currentSubtextLine;
 }
 
-unsigned int EditorView::getContentCurrentLineX()
+int EditorView::getContentCurrentLineX()
 {
     return _contentWindowCords.x;
 }
 
-unsigned int EditorView::getCommandCurrentLineX()
+int EditorView::getCommandCurrentLineX()
 {
     return _commandWindowCords.x;
 }

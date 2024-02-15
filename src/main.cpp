@@ -11,7 +11,8 @@ int main(int argc, char **argv)
     if (argc > 1)
     {
         // MyString fileName("../src/main.cpp");
-        MyString fileName("aa");
+        // if(argv[1] == NULL) return 1;
+        MyString fileName("aaa");
         // MyString fileName(argv[1]);
         EditorApp app(fileName);
         EditorView view(app);

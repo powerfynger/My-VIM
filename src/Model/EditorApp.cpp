@@ -211,11 +211,16 @@ int EditorApp::rebalanceLine(int lineNumber)
 
 // unsigned int EditorApp::getRealLinesNumbers
 
-int EditorApp::_deleteChar(unsigned int lineNumber, unsigned int subLineNumber, unsigned int charIndex, bool isContent)
+int EditorApp::_deleteChar(unsigned int lineNumber, unsigned int subLineNumber, int charIndex, bool isContent)
 {
     if(isContent)
     {
-        _text[lineNumber][subLineNumber].erase(charIndex, 1);
+        if(charIndex < 0)
+        {
+            addCurrentLineToPrevious();
+            return 0;
+        }
+        else _text[lineNumber][subLineNumber].erase(charIndex, 1);
         return rebalanceLine(lineNumber);
     }
     else
@@ -258,6 +263,7 @@ void EditorApp::deleteCharBeforeCursor(bool isContent)
 {
 
     if(isContent){
+
         _editorView->updateContentLine(_deleteChar(
             _editorView->getCurrentTextLine(), 
             _editorView->getCurrentSubTextLine(), 
@@ -267,6 +273,7 @@ void EditorApp::deleteCharBeforeCursor(bool isContent)
     }
     else
     {
+
         _deleteChar(0, 0, _editorView->getCommandCurrentLineX() - 1, false);
         _editorView->updateCommandLine();
 
@@ -346,6 +353,28 @@ void EditorApp::divideCurrentLineAfterCursor()
     tmpVector[0] = tmpString;
     _insertNewLine(tmpVector, tmpCurrentTextLine + 1);
 
+
+}
+
+void EditorApp::addCurrentLineToPrevious()
+{
+    int tmpCurrentTextLine = _editorView->getCurrentTextLine();
+    int tmpCurrentSubTextLine = _editorView->getCurrentSubTextLine();
+    int tmpCurrentIndex = _editorView->getContentCurrentLineX();
+
+    if (tmpCurrentTextLine == 0 && tmpCurrentSubTextLine == 0) return;
+
+    // _text[tmpCurrentTextLine - 1].insert(_text[tmpCurrentTextLine - 1].end(), _text[tmpCurrentTextLine ].begin((), _text[tmpCurrentTextLine].end());
+    for(MyString& line : _text[tmpCurrentTextLine])
+    {
+        _text[tmpCurrentTextLine - 1][_text[tmpCurrentTextLine - 1].size()-1].append(line.c_str());
+    }
+    _text.erase(_text.begin() + tmpCurrentTextLine);    
+    // _deleteLine(tmpCurrentTextLine);
+    rebalanceLine(tmpCurrentTextLine-1);
+    // _editorView->decCurrentLine();
+    _editorView->moveCursorUp(true);
+    _editorView->updateContentLine(-1);
 
 }
 

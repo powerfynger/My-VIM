@@ -181,6 +181,7 @@ void EditorController::handleNavigationInput()
 void EditorController::handleWriteInput()
 {
     int c = _view.ncurses.getInput();
+    if (c < 0) return;
      switch (c)
     {
     case KEY_UP:
