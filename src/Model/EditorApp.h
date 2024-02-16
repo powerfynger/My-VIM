@@ -71,6 +71,7 @@ private:
     std::fstream _fileDescr;
     MyString _currFileName;
 
+    void _rebalanceVectorOfLines(int vectorNumber);
     void _readText(std::fstream& file);
     bool _isWhitespace(char c);
     int _deleteChar(unsigned int lineNumber, unsigned int subLineNumber, int charIndex, bool isContent);
@@ -80,6 +81,7 @@ private:
     void _deleteLine(int lineNumber);
     void _writeText(MyString fileName);
     bool _findText(MyString userText, unsigned int *textLine, unsigned int *textSubLine, bool isReverse);
+
 
     bool _isFileExist(MyString& flineName);
     bool _isNumeric(MyString& line);

@@ -475,6 +475,7 @@ bool EditorView::_handleScrollUp()
         if (_currentTextLine < 0)
         {
             _currentTextLine = 0;
+            _currentSubtextLine = 0;
             return true;
         }
         _currentSubtextLine = _editorApp.returnLine(_currentTextLine)->size()-1;

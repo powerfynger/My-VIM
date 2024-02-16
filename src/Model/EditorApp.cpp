@@ -337,6 +337,38 @@ void EditorApp::_deleteLine(int lineNumber)
 
 }
 
+
+void EditorApp::_rebalanceVectorOfLines(int vectorNumber)
+{
+    MyString tmp;
+
+    for(auto line : _text[vectorNumber])
+    {
+        _textToDisplayLinesNumber--;
+        tmp.append(line.c_str());
+    }
+    _text[vectorNumber].clear();
+
+    int tmpLen = tmp.length() / _maxLineLength;
+    for (int i = 0; i < tmpLen; i++)
+    {
+        // subStr = line.substr(i * _maxLineLength, _maxLineLength);
+        // lineBuffer.push_back(subStr);
+        _text[vectorNumber].push_back(tmp.substr(i * _maxLineLength, _maxLineLength));
+        _textToDisplayLinesNumber++;
+    // _textToDisplayLinesNumber++;
+    }
+    // subStr = line.substr(tmp * _maxLineLength, line.length() - tmp * _maxLineLength);
+    // lineBuffer.push_back(subStr);
+    _text[vectorNumber].push_back(tmp.substr(tmpLen * _maxLineLength, tmp.length() - tmpLen * _maxLineLength));
+    _textToDisplayLinesNumber++;
+
+    
+    // _text.push_back(lineBuffer);s
+
+
+}
+
 void EditorApp::divideCurrentLineAfterCursor()
 {
     int tmpCurrentTextLine = _editorView->getCurrentTextLine();
@@ -352,8 +384,9 @@ void EditorApp::divideCurrentLineAfterCursor()
 
     tmpVector[0] = tmpString;
     _insertNewLine(tmpVector, tmpCurrentTextLine + 1);
+    _rebalanceVectorOfLines(tmpCurrentTextLine + 1);
 
-
+    _editorView->updateContentLine(-1);
 }
 
 void EditorApp::addCurrentLineToPrevious()
@@ -364,16 +397,15 @@ void EditorApp::addCurrentLineToPrevious()
 
     if (tmpCurrentTextLine == 0 && tmpCurrentSubTextLine == 0) return;
 
-    // _text[tmpCurrentTextLine - 1].insert(_text[tmpCurrentTextLine - 1].end(), _text[tmpCurrentTextLine ].begin((), _text[tmpCurrentTextLine].end());
+    _editorView->moveCursorLineNumber(tmpCurrentTextLine-1);
+    _editorView->moveCursorEndLine(true);
     for(MyString& line : _text[tmpCurrentTextLine])
     {
         _text[tmpCurrentTextLine - 1][_text[tmpCurrentTextLine - 1].size()-1].append(line.c_str());
     }
     _text.erase(_text.begin() + tmpCurrentTextLine);    
-    // _deleteLine(tmpCurrentTextLine);
-    rebalanceLine(tmpCurrentTextLine-1);
-    // _editorView->decCurrentLine();
-    _editorView->moveCursorUp(true);
+    _textLinesNumber--;
+    _rebalanceVectorOfLines(tmpCurrentTextLine-1);
     _editorView->updateContentLine(-1);
 
 }

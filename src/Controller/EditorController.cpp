@@ -203,7 +203,8 @@ void EditorController::handleWriteInput()
     case 13:
         // _app.insertEmptyLine();
         _app.divideCurrentLineAfterCursor();
-        _view.updateContentLine(-1);
+        _view.moveCursorDown(true);
+        _view.moveCursorStartLine(true);
         break;
     // ESQ     
     case 27:
