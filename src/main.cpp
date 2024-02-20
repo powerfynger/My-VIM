@@ -13,7 +13,7 @@ int main(int argc, char **argv)
         // MyString fileName("../src/main.cpp");
         // if(argv[1] == NULL) return 1;
         // MyString fileName(argv[1]);
-        MyString fileName("aaa");
+        MyString fileName("example.txt");
         EditorApp app(fileName);
         EditorView view(app);
         app.addView(&view);

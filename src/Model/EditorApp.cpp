@@ -368,7 +368,11 @@ void EditorApp::_rebalanceVectorOfLines(int vectorNumber)
 
 
 }
-
+// 12345678
+// 9
+// |123|
+// |456|
+// |789| 
 void EditorApp::divideCurrentLineAfterCursor()
 {
     int tmpCurrentTextLine = _editorView->getCurrentTextLine();
@@ -379,8 +383,8 @@ void EditorApp::divideCurrentLineAfterCursor()
     _text[tmpCurrentTextLine][tmpCurrentSubTextLine].erase(tmpCurrentIndex, _text[tmpCurrentTextLine][tmpCurrentSubTextLine].length() - tmpCurrentIndex);
 
     std::vector<MyString> tmpVector(_text[tmpCurrentTextLine].begin() + tmpCurrentSubTextLine, _text[tmpCurrentTextLine].end());
-    if (tmpCurrentSubTextLine == 0) tmpCurrentSubTextLine++;
-    _text[tmpCurrentTextLine].erase(_text[tmpCurrentTextLine].begin() + tmpCurrentSubTextLine, _text[tmpCurrentTextLine].end());
+    // if (tmpCurrentSubTextLine == 0) tmpCurrentSubTextLine += 2;
+    _text[tmpCurrentTextLine].erase(_text[tmpCurrentTextLine].begin() + tmpCurrentSubTextLine + 1, _text[tmpCurrentTextLine].end());
 
     tmpVector[0] = tmpString;
     _insertNewLine(tmpVector, tmpCurrentTextLine + 1);
